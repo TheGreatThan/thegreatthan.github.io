@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +17,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-
             align-items: center;
             justify-content: center;
             overflow-x: hidden;
@@ -39,7 +37,6 @@
             margin: 20px 0;
             transform: scale(1);
             transition: 0.5s;
-
         }
 
         .puzzle-section h2 {
@@ -62,7 +59,6 @@
 
         .answer-btn:hover {
             transform: scale(1.1);
-
             background: #c2185b;
         }
 
@@ -86,7 +82,6 @@
             animation: bloom 2s ease-out;
         }
 
-
         .message {
             display: none;
             background: white;
@@ -106,7 +101,6 @@
         }
 
         .message p {
-
             line-height: 1.6;
             color: #333;
             font-size: 1.1em;
@@ -124,9 +118,7 @@
 
         @keyframes float {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-200px) rotate(360deg); 
-
-opacity: 0; }
+            100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
         }
 
         @keyframes shake {
@@ -170,7 +162,6 @@ opacity: 0; }
             }
         }
     </style>
-
 </head>
 <body>
     <div class="container">
@@ -186,9 +177,7 @@ opacity: 0; }
             <h3>💌 To My Dear Arval! 💌</h3>
             <p>Arval! I'm sending you my warmest wishes:</p>
             <p>🌸 May you have brilliant success in your Psychology studies<br>
-               🌸 May you always maintain your 
-
-passion and enthusiasm for your field<br>
+               🌸 May you always maintain your passion and enthusiasm for your field<br>
                🌸 May you find balance between studies and life<br>
                🌸 And find joy in every challenge college brings!</p>
             <p>Arval, I truly cherish our friendship since 2018. Even though you're busy with your college studies in America now, the memories of us playing games together and sharing so many fun moments will always live in my heart. I believe that with your intelligence, talent, and kindness, you'll become an outstanding psychologist in the future. I will always support you and be proud of you! ❤️</p>
@@ -196,9 +185,7 @@ passion and enthusiasm for your field<br>
     </div>
 
     <!-- Confetti JS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/
-
-confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script>
         // Array of questions, options and correct answers
@@ -214,9 +201,7 @@ confetti.browser.min.js"></script>
             },
             {
                 question: "What makes our friendship special?",
-                options: ["We used to play together a lot, we're bestie", "We were 
-
-classmates", "We're from the same hometown"],
+                options: ["We used to play together a lot, we're bestie", "We were classmates", "We're from the same hometown"],
                 correct: 0,
                 hints: [
                     "Hint: It's related to the time we spent together 💝",
@@ -231,7 +216,6 @@ classmates", "We're from the same hometown"],
                     "Hint: It's related to understanding people ☀️",
                     "Hint: It's not a technical field ☀️"
                 ]
-
             },
             {
                 question: "Where does Arval currently live?",
@@ -247,7 +231,6 @@ classmates", "We're from the same hometown"],
                 options: ["Always helping others", "Being smart and talented", "Both of the above"],
                 correct: 2,
                 hints: [
-
                     "Hint: Arval has many great qualities 🎶",
                     "Hint: Not just one trait 🎶"
                 ]
@@ -266,7 +249,6 @@ classmates", "We're from the same hometown"],
         let currentQuestion = 0;
 
         // Initialize the first question
-
         window.onload = function() {
             displayQuestion(currentQuestion);
         };
@@ -284,9 +266,7 @@ classmates", "We're from the same hometown"],
             puzzleSection.appendChild(title);
 
             // Create question text
-            const questionText = 
-
-document.createElement('p');
+            const questionText = document.createElement('p');
             questionText.innerHTML = questionData.question;
             questionText.style.fontSize = '1.2em';
             questionText.style.margin = '15px 0';
@@ -316,7 +296,6 @@ document.createElement('p');
 
             if (answer === correctAnswer) {
                 // Small confetti for correct answer
-
                 confetti({
                     particleCount: 30,
                     spread: 50,
@@ -335,7 +314,6 @@ document.createElement('p');
                         particleCount: 100,
                         spread: 70,
                         origin: { y: 0.6 },
-
                         colors: ['#FF9A9E', '#FAD0C4', '#E91E63', '#FFC107', '#76FF03']
                     });
 
@@ -355,7 +333,6 @@ document.createElement('p');
                             spread: 55,
                             origin: { x: 1 },
                             colors: ['#FF9A9E', '#FAD0C4', '#E91E63']
-
                         });
 
                         if (Date.now() < end) {
@@ -370,7 +347,6 @@ document.createElement('p');
                         document.getElementById('rose').style.display = 'block';
                     }, 1000);
                 } else {
-
                     // Go to next question
                     const puzzleSection = document.getElementById('puzzle');
                     puzzleSection.style.animation = 'bloom 0.5s ease-out';
@@ -387,7 +363,6 @@ document.createElement('p');
                 }
 
                 // Get hints based on which wrong answer was chosen
-
                 let hint = '';
                 if (answer < questions[questionIndex].correct) {
                     hint = questions[questionIndex].hints[0];
@@ -402,7 +377,6 @@ document.createElement('p');
                 hintElement.style.padding = '10px';
                 hintElement.style.marginTop = '15px';
                 hintElement.style.border = '2px dashed #e91e63';
-
                 hintElement.style.borderRadius = '10px';
                 hintElement.style.animation = 'fadeIn 0.5s ease-in';
                 hintElement.style.fontStyle = 'italic';
@@ -417,9 +391,7 @@ document.createElement('p');
                 hintElement.classList.add('hint-text');
 
                 // Add the hint to the puzzle section
-                document.getElementById('puzzle').append
-
-Child(hintElement);
+                document.getElementById('puzzle').appendChild(hintElement);
 
                 // Shake the puzzle section for wrong answer effect
                 const puzzleSection = document.getElementById('puzzle');
@@ -435,7 +407,6 @@ Child(hintElement);
         function showMessage() {
             const messageElement = document.getElementById('message');
             // Activate display and animation
-
             messageElement.style.display = 'block';
             messageElement.style.animation = 'slideUp 1s ease-out forwards';
 
@@ -449,7 +420,6 @@ Child(hintElement);
                 heart.style.fontSize = (25 + Math.random() * 20) + 'px';
                 heart.style.animation = `float ${2 + Math.random() * 2}s ease-out`;
                 heart.style.zIndex = 9999;
-
                 document.body.appendChild(heart);
 
                 setTimeout(() => heart.remove(), 3000);
