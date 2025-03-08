@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng 8/3 - Con Yêu Mẹ!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .puzzle-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin: 20px 0;
+
+            transform: scale(1);
+            transition: 0.5s;
+        }
+
+        .puzzle-section h2 {
+            color: #e91e63;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .answer-btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.1em;
+        }
+
+        .answer-btn:hover {
+            transform: scale(1.1);
+            background: #c2185b;
+        }
+
+        .rose-container {
+            position: relative;
+            display: none;
+            margin: 30px auto;
+            width: 250px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .rose-container:hover {
+            transform: scale(1.08);
+        }
+
+        .rose-image {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+
+            animation: bloom 2s ease-out;
+        }
+
+        .message {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px auto;
+            box-shadow: 0 0 25px rgba(0,0,0,0.1);
+            max-width: 500px;
+            opacity: 0;
+            animation: slideUp 1s ease-out forwards;
+        }
+
+        .message h3 {
+            color: #e91e63;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+
+        .message p {
+            line-height: 1.6;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        @keyframes bloom {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+
+            100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-5px); }
+            20% { transform: translateX(5px); }
+            30% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            50% { transform: translateX(-5px); }
+            60% { transform: translateX(5px); }
+            70% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+            90% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+
+        }
+
+        @media (max-width: 480px) {
+            .puzzle-section {
+                padding: 20px;
+            }
+            
+            .answer-btn {
+                font-size: 1em;
+                padding: 8px 16px;
+            }
+            
+            .click-spot {
+                width: 40px;
+                height: 40px;
+                bottom: 30%;
+                right: 25%;
+            }
+            
+            .message {
+                padding: 20px;
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="puzzle-section" id="puzzle">
+            <!-- Questions will be dynamically generated here -->
+        </div>
+
+        <div class="rose-container" id="rose" onclick="showMessage()">
+            <img src="roses.png" class="rose-image" alt="Bó hoa cho mẹ">
+        </div>
+
+        <div class="message" id="message">
+            <h3>💌 Gửi Mẹ Yêu Của Con! 💌</h3>
+            <p>Mẹ ơi! Nhân ngày 8/3, con chúc mẹ luôn:</p>
+
+            <p>🌸 Khỏe mạnh và hạnh phúc<br>
+               🌸 Tràn đầy năng lượng tích cực<br>
+               🌸 Luôn xinh đẹp rạng ngời<br>
+               🌸 Và mãi là người phụ nữ con yêu nhất!</p>
+            <p>Cảm ơn mẹ đã luôn là người bạn lớn, người thầy vĩ đại và là tình yêu vô điều kiện của con. Con yêu mẹ nhiều lắm! ❤️</p>
+        </div>
+    </div>
+
+    <!-- Confetti JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        // Array of questions, options and correct answers
+        const questions = [
+
+            {
+                question: "Ai là người tuyệt vời nhất trên đời?",
+                options: ["Công chúa", "Bà ngoại", "Mẹ của con!"],
+                correct: 2,
+                hints: [
+                    "Gợi ý: Người này yêu thương con vô điều kiện, không phải là một công chúa đâu 💖",
+                    "Gợi ý: Người này gần gũi hơn bà ngoại, và chăm sóc con mỗi ngày đấy 💖"
+                ]
+            },
+            {
+                question: "Mẹ thích món quà nào nhất từ con?",
+                options: ["Đồ hiệu đắt tiền", "Tình yêu và sự quan tâm", "Một chiếc xe mới"],
+                correct: 1,
+                hints: [
+                    "Gợi ý: Đây là thứ không mua 
+
+được bằng tiền đâu 💝",
+                    "Gợi ý: Mẹ cần tình cảm hơn là vật chất đấy 💝"
+                ]
+            },
+            {
+                question: "Nụ cười của mẹ giống như điều gì?",
+                options: ["Ánh nắng ban mai", "Cơn mưa mùa hè", "Bông tuyết mùa đông"],
+                correct: 0,
+                hints: [
+                    "Gợi ý: Đây là thứ ấm áp và sáng lạn ☀️",
+                    "Gợi ý: Không phải là thứ làm con ướt đâu ☀️"
+                ]
+            },
+            {
+                question: "Bàn tay mẹ đã làm gì cho con?",
+
+                options: ["Nấu món ăn ngon", "Lau nước mắt khi con buồn", "Tất cả những điều trên"],
+                correct: 2,
+                hints: [
+                    "Gợi ý: Mẹ làm nhiều thứ lắm, không chỉ một điều đâu 👐",
+                    "Gợi ý: Hãy chọn đáp án bao gồm tất cả nhé 👐"
+                ]
+            },
+            {
+                question: "Con thương mẹ đến mức nào?",
+                options: ["Như trái đất thương mặt trời", "Nhiều lắm", "Vô hạn"],
+                correct: 2,
+                hints: [
+                    "Gợi ý: Tình yêu thương mẹ không thể đo đếm được đâu ❤️",
+                    "Gợi ý: Chọn câu trả lời không có giới hạn nào 💓"
+
+                ]
+            },
+            {
+                question: "Món ăn nào mẹ nấu ngon nhất?",
+                options: ["Cơm chiên", "Canh chua", "Món nào mẹ nấu cũng ngon!"],
+                correct: 2,
+                hints: [
+                    "Gợi ý: Nghĩ xem, có món nào mẹ nấu mà không ngon không? 🍲",
+                    "Gợi ý: Tình yêu của mẹ biến mọi món ăn thành tuyệt phẩm đấy 🍚"
+                ]
+            },
+            {
+                question: "Khi con buồn, ai là người đầu tiên con muốn gặp?",
+                options: ["Bạn bè", "Mẹ", "Thú cưng"],
+                correct: 1,
+                hints: [
+
+                    "Gợi ý: Đây là người luôn an ủi con mọi lúc 💞",
+                    "Gợi ý: Người này hiểu con hơn ai hết 💞"
+                ]
+            },
+            {
+                question: "Tiếng cười của mẹ nghe như thế nào?",
+                options: ["Như nhạc du dương", "Như chim hót", "Như tiếng chuông bạc"],
+                correct: 0,
+                hints: [
+                    "Gợi ý: Đây là âm thanh êm dịu làm con thấy bình yên 🎵",
+                    "Gợi ý: Không phải tiếng chim hay tiếng chuông đâu 🎵"
+                ]
+            },
+            {
+                question: "Bài hát nào con muốn hát tặng mẹ?",
+
+                options: ["Bài hát về tình yêu", "Lời ru của mẹ", "Một bài về gia đình"],
+                correct: 1,
+                hints: [
+                    "Gợi ý: Đây là điều ngọt ngào mẹ đã làm cho con từ nhỏ 🎶",
+                    "Gợi ý: Lời ca ru con vào giấc ngủ 🎶"
+                ]
+            },
+            {
+                question: "Điều gì làm nên một người mẹ tuyệt vời?",
+                options: ["Xinh đẹp", "Giàu có", "Tình yêu thương vô bờ bến"],
+                correct: 2,
+                hints: [
+                    "Gợi ý: Không phải vẻ bề ngoài đâu 💕",
+                    "Gợi ý: Đây là điều từ trái tim, không phải từ ví tiền 💕"
+                ]
+
+            }
+        ];
+
+        let currentQuestion = 0;
+        
+        // Initialize the first question
+        window.onload = function() {
+            displayQuestion(currentQuestion);
+        };
+        
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            const puzzleSection = document.getElementById('puzzle');
+            
+            // Clear previous content
+            puzzleSection.innerHTML = '';
+            
+            // Create question title
+            const title = document.createElement('h2');
+            title.innerHTML = '🎀 Câu Đố Dành 
+
+Cho Mẹ Yêu 🎀';
+            puzzleSection.appendChild(title);
+            
+            // Create question text
+            const questionText = document.createElement('p');
+            questionText.innerHTML = questionData.question;
+            questionText.style.fontSize = '1.2em';
+            questionText.style.margin = '15px 0';
+            questionText.style.fontWeight = 'bold';
+            puzzleSection.appendChild(questionText);
+            
+            // Create question counter
+            const counter = document.createElement('p');
+            counter.innerHTML = `Câu hỏi ${index + 1}/${questions.length}`;
+            counter.style.fontSize = '0.9em';
+
+            counter.style.color = '#888';
+            counter.style.marginBottom = '15px';
+            puzzleSection.appendChild(counter);
+            
+            // Create answer buttons
+            questionData.options.forEach((option, i) => {
+                const button = document.createElement('button');
+                button.className = 'answer-btn';
+                button.innerHTML = option;
+                button.onclick = function() { checkAnswer(i, index); };
+                puzzleSection.appendChild(button);
+            });
+        }
+        
+        function checkAnswer(answer, questionIndex) {
+
+            const correctAnswer = questions[questionIndex].correct;
+            
+            if (answer === correctAnswer) {
+                // Small confetti for correct answer
+                confetti({
+                    particleCount: 30,
+                    spread: 50,
+                    origin: { y: 0.6 },
+                    colors: ['#FF9A9E', '#FAD0C4', '#E91E63']
+                });
+                
+                // Check if this is the last question
+                if (questionIndex === questions.length - 1) {
+                    // Big confetti for completing all questions
+                    const duration = 3000;
+                    const end = Date.now() + duration;
+
+                    
+                    // Colorful confetti burst
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#FF9A9E', '#FAD0C4', '#E91E63', '#FFC107', '#76FF03']
+                    });
+                    
+                    // Confetti shower
+                    (function frame() {
+                        confetti({
+                            particleCount: 2,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 },
+                            colors: ['#FF9A9E', '#FAD0C4', '#E91E63']
+                        });
+                        
+                        confetti({
+
+                            particleCount: 2,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 },
+                            colors: ['#FF9A9E', '#FAD0C4', '#E91E63']
+                        });
+                        
+                        if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                        }
+                    }());
+                    
+                    // Show the rose after completing all questions
+                    document.getElementById('puzzle').style.transform = 'scale(0)';
+                    setTimeout(() => {
+                        document.getElementById('puzzle').style.di
+
+splay = 'none';
+                        document.getElementById('rose').style.display = 'block';
+                    }, 1000);
+                } else {
+                    // Go to next question
+                    const puzzleSection = document.getElementById('puzzle');
+                    puzzleSection.style.animation = 'bloom 0.5s ease-out';
+                    setTimeout(() => {
+                        puzzleSection.style.animation = '';
+                        currentQuestion++;
+                        displayQuestion(currentQuestion);
+                    }, 700);
+                }
+            } else {
+                // Vibrate the device if browser supports it
+                if (navigator.vibrate) {
+
+                    navigator.vibrate(300);
+                }
+                
+                // Get hints based on which wrong answer was chosen
+                let hint = '';
+                if (answer < questions[questionIndex].correct) {
+                    hint = questions[questionIndex].hints[0];
+                } else {
+                    hint = questions[questionIndex].hints[1];
+                }
+                
+                // Create and show the hint in a fancy way
+                const hintElement = document.createElement('div');
+                hintElement.innerHTML = hint;
+                hintElement.style.color = '#e91e63';
+
+                hintElement.style.padding = '10px';
+                hintElement.style.marginTop = '15px';
+                hintElement.style.border = '2px dashed #e91e63';
+                hintElement.style.borderRadius = '10px';
+                hintElement.style.animation = 'fadeIn 0.5s ease-in';
+                hintElement.style.fontStyle = 'italic';
+                
+                // Remove any existing hints first
+                const existingHint = document.querySelector('.hint-text');
+                if (existingHint) {
+                    existingHint.remove();
+                }
+                
+                // Add the class for future reference
+                hintElement.classList.add('hint-
+
+text');
+                
+                // Add the hint to the puzzle section
+                document.getElementById('puzzle').appendChild(hintElement);
+                
+                // Shake the puzzle section for wrong answer effect
+                const puzzleSection = document.getElementById('puzzle');
+                puzzleSection.style.animation = 'shake 0.5s';
+                
+                // Reset the animation after it completes
+                setTimeout(() => {
+                    puzzleSection.style.animation = '';
+                }, 500);
+            }
+
+            
+            // Code moved into the main if-else statement above
+        }
+
+        function showMessage() {
+            const messageElement = document.getElementById('message');
+            // Kích hoạt hiển thị và animation
+            messageElement.style.display = 'block';
+            messageElement.style.animation = 'slideUp 1s ease-out forwards';
+            
+            // Hiệu ứng trái tim bay
+            const hearts = ['❤️', '💖', '💐', '🌸', '🌺'];
+            for(let i = 0; i < 12; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = hearts[Math.floor(Math.random() * 
+
+hearts.length)];
+                heart.style.position = 'absolute';
+                heart.style.left = Math.random() * 90 + '%';
+                heart.style.fontSize = (25 + Math.random() * 20) + 'px';
+                heart.style.animation = `float ${2 + Math.random() * 2}s ease-out`;
+                heart.style.zIndex = 9999;
+                document.body.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 3000);
+            }
+
+            // Hiệu ứng rung nhẹ cho lời chúc
+            setTimeout(() => {
+                messageElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    messageElement.style.transform = 
+
+'scale(1)';
+                }, 200);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
