@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Surprise For Arval!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .puzzle-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            transform: scale(1);
+            transition: 0.5s;
+
+        }
+
+        .puzzle-section h2 {
+            color: #e91e63;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .answer-btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.1em;
+        }
+
+        .answer-btn:hover {
+            transform: scale(1.1);
+
+            background: #c2185b;
+        }
+
+        .rose-container {
+            position: relative;
+            display: none;
+            margin: 30px auto;
+            width: 250px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .rose-container:hover {
+            transform: scale(1.08);
+        }
+
+        .rose-image {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+            animation: bloom 2s ease-out;
+        }
+
+
+        .message {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px auto;
+            box-shadow: 0 0 25px rgba(0,0,0,0.1);
+            max-width: 500px;
+            opacity: 0;
+            animation: slideUp 1s ease-out forwards;
+        }
+
+        .message h3 {
+            color: #e91e63;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        .message p {
+
+            line-height: 1.6;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        @keyframes bloom {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            0% { transform: translateY(100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-200px) rotate(360deg); 
+
+opacity: 0; }
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-5px); }
+            20% { transform: translateX(5px); }
+            30% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            50% { transform: translateX(-5px); }
+            60% { transform: translateX(5px); }
+            70% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+            90% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .puzzle-section {
+                padding: 20px;
+            }
+
+            .answer-btn {
+                font-size: 1em;
+                padding: 8px 16px;
+            }
+
+            .click-spot {
+                width: 40px;
+                height: 40px;
+                bottom: 30%;
+                right: 25%;
+            }
+
+            .message {
+                padding: 20px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="puzzle-section" id="puzzle">
+            <!-- Questions will be dynamically generated here -->
+        </div>
+
+        <div class="rose-container" id="rose" onclick="showMessage()">
+            <img src="roses.png" class="rose-image" alt="Bouquet of roses for Arval">
+        </div>
+
+        <div class="message" id="message">
+            <h3>💌 To My Dear Arval! 💌</h3>
+            <p>Arval! I'm sending you my warmest wishes:</p>
+            <p>🌸 May you have brilliant success in your Psychology studies<br>
+               🌸 May you always maintain your 
+
+passion and enthusiasm for your field<br>
+               🌸 May you find balance between studies and life<br>
+               🌸 And find joy in every challenge college brings!</p>
+            <p>Arval, I truly cherish our friendship since 2018. Even though you're busy with your college studies in America now, the memories of us playing games together and sharing so many fun moments will always live in my heart. I believe that with your intelligence, talent, and kindness, you'll become an outstanding psychologist in the future. I will always support you and be proud of you! ❤️</p>
+        </div>
+    </div>
+
+    <!-- Confetti JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/
+
+confetti.browser.min.js"></script>
+
+    <script>
+        // Array of questions, options and correct answers
+        const questions = [
+            {
+                question: "When did our friendship begin?",
+                options: ["2017", "2018", "2019"],
+                correct: 1,
+                hints: [
+                    "Hint: Not the year of the World Cup in Russia 💖",
+                    "Hint: Not after COVID started 💖"
+                ]
+            },
+            {
+                question: "What makes our friendship special?",
+                options: ["We used to play together a lot, we're bestie", "We were 
+
+classmates", "We're from the same hometown"],
+                correct: 0,
+                hints: [
+                    "Hint: It's related to the time we spent together 💝",
+                    "Hint: Our fun memories together 💝"
+                ]
+            },
+            {
+                question: "What is Arval currently studying in college?",
+                options: ["Medicine", "Psychology", "Computer Science"],
+                correct: 1,
+                hints: [
+                    "Hint: It's related to understanding people ☀️",
+                    "Hint: It's not a technical field ☀️"
+                ]
+
+            },
+            {
+                question: "Where does Arval currently live?",
+                options: ["United States", "Canada", "Australia"],
+                correct: 0,
+                hints: [
+                    "Hint: A country with 50 states ❤️",
+                    "Hint: Not part of the Commonwealth nations 💓"
+                ]
+            },
+            {
+                question: "What makes Arval an amazing friend?",
+                options: ["Always helping others", "Being smart and talented", "Both of the above"],
+                correct: 2,
+                hints: [
+
+                    "Hint: Arval has many great qualities 🎶",
+                    "Hint: Not just one trait 🎶"
+                ]
+            },
+            {
+                question: "What did Arval and I enjoy doing together?",
+                options: ["All", "Studying", "Playing game, hanging out..."],
+                correct: 0,
+                hints: [
+                    "Hint: Can't be one 🌟",
+                    "Hint: Usually done in free time 🌟"
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Initialize the first question
+
+        window.onload = function() {
+            displayQuestion(currentQuestion);
+        };
+
+        function displayQuestion(index) {
+            const questionData = questions[index];
+            const puzzleSection = document.getElementById('puzzle');
+
+            // Clear previous content
+            puzzleSection.innerHTML = '';
+
+            // Create question title
+            const title = document.createElement('h2');
+            title.innerHTML = '🎀 Quiz For Dear Arval 🎀';
+            puzzleSection.appendChild(title);
+
+            // Create question text
+            const questionText = 
+
+document.createElement('p');
+            questionText.innerHTML = questionData.question;
+            questionText.style.fontSize = '1.2em';
+            questionText.style.margin = '15px 0';
+            questionText.style.fontWeight = 'bold';
+            puzzleSection.appendChild(questionText);
+
+            // Create question counter
+            const counter = document.createElement('p');
+            counter.innerHTML = `Question ${index + 1}/${questions.length}`;
+            counter.style.fontSize = '0.9em';
+            counter.style.color = '#888';
+            counter.style.marginBottom = '15px';
+            puzzleSection.appendChild(counter);
+
+            // Create answer buttons
+            questionData.options.forEach((option, i) => {
+                const button = document.createElement('button');
+                button.className = 'answer-btn';
+                button.innerHTML = option;
+                button.onclick = function() { checkAnswer(i, index); };
+                puzzleSection.appendChild(button);
+            });
+        }
+
+        function checkAnswer(answer, questionIndex) {
+            const correctAnswer = questions[questionIndex].correct;
+
+            if (answer === correctAnswer) {
+                // Small confetti for correct answer
+
+                confetti({
+                    particleCount: 30,
+                    spread: 50,
+                    origin: { y: 0.6 },
+                    colors: ['#FF9A9E', '#FAD0C4', '#E91E63']
+                });
+
+                // Check if this is the last question
+                if (questionIndex === questions.length - 1) {
+                    // Big confetti for completing all questions
+                    const duration = 3000;
+                    const end = Date.now() + duration;
+
+                    // Colorful confetti burst
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+
+                        colors: ['#FF9A9E', '#FAD0C4', '#E91E63', '#FFC107', '#76FF03']
+                    });
+
+                    // Confetti shower
+                    (function frame() {
+                        confetti({
+                            particleCount: 2,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 },
+                            colors: ['#FF9A9E', '#FAD0C4', '#E91E63']
+                        });
+
+                        confetti({
+                            particleCount: 2,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 },
+                            colors: ['#FF9A9E', '#FAD0C4', '#E91E63']
+
+                        });
+
+                        if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                        }
+                    }());
+
+                    // Show the rose after completing all questions
+                    document.getElementById('puzzle').style.transform = 'scale(0)';
+                    setTimeout(() => {
+                        document.getElementById('puzzle').style.display = 'none';
+                        document.getElementById('rose').style.display = 'block';
+                    }, 1000);
+                } else {
+
+                    // Go to next question
+                    const puzzleSection = document.getElementById('puzzle');
+                    puzzleSection.style.animation = 'bloom 0.5s ease-out';
+                    setTimeout(() => {
+                        puzzleSection.style.animation = '';
+                        currentQuestion++;
+                        displayQuestion(currentQuestion);
+                    }, 700);
+                }
+            } else {
+                // Vibrate the device if browser supports it
+                if (navigator.vibrate) {
+                    navigator.vibrate(300);
+                }
+
+                // Get hints based on which wrong answer was chosen
+
+                let hint = '';
+                if (answer < questions[questionIndex].correct) {
+                    hint = questions[questionIndex].hints[0];
+                } else {
+                    hint = questions[questionIndex].hints[1];
+                }
+
+                // Create and show the hint in a fancy way
+                const hintElement = document.createElement('div');
+                hintElement.innerHTML = hint;
+                hintElement.style.color = '#e91e63';
+                hintElement.style.padding = '10px';
+                hintElement.style.marginTop = '15px';
+                hintElement.style.border = '2px dashed #e91e63';
+
+                hintElement.style.borderRadius = '10px';
+                hintElement.style.animation = 'fadeIn 0.5s ease-in';
+                hintElement.style.fontStyle = 'italic';
+
+                // Remove any existing hints first
+                const existingHint = document.querySelector('.hint-text');
+                if (existingHint) {
+                    existingHint.remove();
+                }
+
+                // Add the class for future reference
+                hintElement.classList.add('hint-text');
+
+                // Add the hint to the puzzle section
+                document.getElementById('puzzle').append
+
+Child(hintElement);
+
+                // Shake the puzzle section for wrong answer effect
+                const puzzleSection = document.getElementById('puzzle');
+                puzzleSection.style.animation = 'shake 0.5s';
+
+                // Reset the animation after it completes
+                setTimeout(() => {
+                    puzzleSection.style.animation = '';
+                }, 500);
+            }
+        }
+
+        function showMessage() {
+            const messageElement = document.getElementById('message');
+            // Activate display and animation
+
+            messageElement.style.display = 'block';
+            messageElement.style.animation = 'slideUp 1s ease-out forwards';
+
+            // Floating hearts effect
+            const hearts = ['❤️', '💖', '💐', '🌸', '🌺'];
+            for(let i = 0; i < 12; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.position = 'absolute';
+                heart.style.left = Math.random() * 90 + '%';
+                heart.style.fontSize = (25 + Math.random() * 20) + 'px';
+                heart.style.animation = `float ${2 + Math.random() * 2}s ease-out`;
+                heart.style.zIndex = 9999;
+
+                document.body.appendChild(heart);
+
+                setTimeout(() => heart.remove(), 3000);
+            }
+
+            // Gentle pulse effect for the message
+            setTimeout(() => {
+                messageElement.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    messageElement.style.transform = 'scale(1)';
+                }, 200);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
