@@ -1,0 +1,376 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+}
+
+button {
+    padding: 8px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+#quiz-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    min-height: 350px;
+}
+
+.question {
+    margin-bottom: 25px;
+}
+
+.question-number {
+    font-weight: bold;
+    color: #3498db;
+    margin-bottom: 10px;
+}
+
+.question-text {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* Multiple choice styling */
+.options {
+    list-style: none;
+}
+
+.option {
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.option:hover {
+    background-color: #f0f0f0;
+}
+
+.option.selected {
+    background-color: #d6eaf8;
+    border-color: #3498db;
+}
+
+.option.correct {
+    background-color: #d4edda;
+    border-color: #28a745;
+    font-weight: bold;
+}
+
+.option.incorrect {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+}
+
+/* True/False styling */
+.true-false {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.true-false button {
+    flex: 1;
+    padding: 10px;
+}
+
+.true-false button.selected {
+    background-color: #d6eaf8;
+    border: 2px solid #3498db;
+}
+
+.true-false button.correct {
+    background-color: #d4edda;
+    border: 2px solid #28a745;
+    font-weight: bold;
+}
+
+.true-false button.incorrect {
+    background-color: #f8d7da;
+    border: 2px solid #dc3545;
+}
+
+/* Short answer styling */
+.short-answer input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.short-answer .correct-answer {
+    color: #28a745;
+    font-weight: bold;
+    margin-top: 10px;
+    display: none;
+}
+
+.bottom-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.loading {
+    text-align: center;
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    #quiz-container {
+        padding: 15px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Add this to your styles.css file */
+table {
+    border-collapse: collapse;
+    margin: 15px 0;
+    width: 100%;
+    font-size: 14px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    table-layout: fixed; /* For equal-width columns */
+}
+
+table, th, td {
+    border: 2px solid #3498db;
+}
+
+th, td {
+    padding: 8px 12px;
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+th {
+    background-color: #d6eaf8;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+td {
+    background-color: #f8f9fa;
+}
+
+/* Alternate row colors for better readability */
+tr:nth-child(even) td {
+    background-color: #ebf5fb;
+}
+
+/* First column styling (usually labels) */
+td:first-child {
+    font-weight: bold;
+    text-align: left;
+    background-color: #eaf2f8;
+}
+
+/* For responsive tables */
+@media (max-width: 600px) {
+    table {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 5px;
+    }
+}
+
+.question-text table {
+    max-width: 600px;
+    margin: 15px auto;
+}
+
+/* Add these styles for multiple true/false questions */
+.multiple-true-false .context {
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.multiple-true-false .statement-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.multiple-true-false .statement-text {
+    flex: 1;
+    padding-right: 15px;
+}
+
+.multiple-true-false .true-false-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.multiple-true-false .true-false-buttons button {
+    min-width: 70px;
+    padding: 6px;
+}
+
+@media (max-width: 768px) {
+    .multiple-true-false .statement-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .multiple-true-false .statement-text {
+        margin-bottom: 10px;
+        padding-right: 0;
+    }
+    
+    .multiple-true-false .true-false-buttons {
+        width: 100%;
+    }
+    
+    .multiple-true-false .true-false-buttons button {
+        flex: 1;
+    }
+}
+
+/* Improve the visibility of selected buttons */
+.tf-btn {
+    padding: 8px 15px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 80px;
+}
+
+.tf-btn:hover {
+    background-color: #e9ecef;
+}
+
+.true-btn.selected {
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+    font-weight: bold;
+}
+
+.false-btn.selected {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+    font-weight: bold;
+}
+
+/* Make the statement container more distinct */
+.statement-container {
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: white;
+}
+
+/* Add these styles for better visual feedback on correct/incorrect answers */
+.correct {
+    background-color: #d4edda !important;
+    border-color: #28a745 !important;
+    color: #155724 !important;
+    position: relative;
+}
+
+.incorrect {
+    background-color: #f8d7da !important;
+    border-color: #dc3545 !important;
+    color: #721c24 !important;
+    position: relative;
+}
+
+.correct:after {
+    content: "✓";
+    position: absolute;
+    right: 5px;
+    font-weight: bold;
+}
+
+.incorrect:after {
+    content: "✗";
+    position: absolute;
+    right: 5px;
+    font-weight: bold;
+} 
