@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0">
+    <title>SkyAutoMusic Player - Technical Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #f0f5ff;
+            --secondary-bg: #e9ecef;
+            --accent-1: #2c3e50;
+            --accent-2: #4a6fa5;
+            --accent-3: #3498db;
+            --text-color: #2d3436;
+            --success: #2ecc71;
+            --warning: #f1c40f;
+            --card-shadow: 0 8px 16px rgba(0,0,0,0.08);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all var(--transition-speed) ease;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            position: relative;
+        }
+
+        /* Gradient background effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(66,103,178,0.1) 0%, rgba(76,180,231,0.1) 100%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 3rem;
+        }
+
+        /* Enhanced Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            height: fit-content;
+            box-shadow: var(--card-shadow);
+            border-top: 5px solid var(--accent-3);
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .nav-item {
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(76, 87, 97, 0.08);
+            transform: translateX(5px);
+        }
+
+        .nav-link {
+            color: var(--accent-1);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .nav-link.active {
+            color: var(--accent-3);
+            font-weight: 600;
+        }
+
+        /* Main Content Improvements */
+        .main-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+        }
+
+        h1, h2, h3 {
+            color: var(--accent-1);
+            margin-top: 0;
+            position: relative;
+        }
+
+        h1 {
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        h2 {
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--secondary-bg);
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: var(--accent-3);
+        }
+
+        /* Enhanced Code Blocks */
+        .code-block {
+            background: var(--accent-1);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 2rem 0;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            line-height: 1.8;
+        }
+
+        .code-block code {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            word-break: break-all;
+            display: block;
+            padding: 0.5rem 0;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            overflow-wrap: break-word;
+        }
+        
+        /* Add a visual indicator for soft-wrapped lines */
+        .code-block .wrapped-line {
+            position: relative;
+            padding-left: 1rem;
+        }
+        
+        .code-block .wrapped-line::before {
+            content: "↪";
+            position: absolute;
+            left: 0;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .code-line {
+            display: block;
+            padding: 0.25rem 0;
+        }
+
+        .code-indent {
+            display: inline-block;
+            width: 1.5rem;
+        }
+        
+        /* Code syntax colors */
+        .code-keyword {
+            color: #78c0ff;
+            font-weight: 500;
+        }
+        
+        .code-string {
+            color: #a5d6a7;
+        }
+        
+        .code-comment {
+            color: #9e9e9e;
+            font-style: italic;
+        }
+        
+        .code-number {
+            color: #ffcc80;
+        }
+        
+        .code-function {
+            color: #ce93d8;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .code-language {
+            background: var(--accent-2);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        /* Improved Interactive Feature Cards */
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border-left: 4px solid var(--accent-2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .feature-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .feature-card h3::before {
+            content: "\f105";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: var(--accent-2);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card h3.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        /* Visual Diagrams */
+        .keymap-diagram {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .key {
+            background: var(--secondary-bg);
+            padding: 1rem 0.5rem;
+            text-align: center;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .key:hover {
+            background: var(--accent-3);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Timeline Visualization */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline-step {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: var(--secondary-bg);
+        }
+
+        .timeline-bullet {
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            background: var(--accent-2);
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px rgba(74, 111, 165, 0.2);
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent-1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: var(--accent-3);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Error handling section that was missing */
+        #error-handling {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            --primary-bg: #1a1e24;
+            --secondary-bg: #2d3748;
+            --text-color: #e2e8f0;
+            --accent-1: #81a1c1;
+            --accent-2: #88c0d0;
+            color: var(--text-color);
+        }
+
+        body.dark-mode .main-content,
+        body.dark-mode .sidebar,
+        body.dark-mode .feature-card {
+            background: #2d3748;
+            color: var(--text-color);
+        }
+
+        body.dark-mode .code-block {
+            background: #1a1e24;
+            border: 1px solid #4a5568;
+        }
+
+        body.dark-mode .key {
+            background: #4a5568;
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .sidebar {
+                position: static;
+                order: 2;
+            }
+
+            .keymap-diagram {
+                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            }
+        }
+
+        /* Medium screens (tablets) */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+            
+            .code-block {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .code-block code {
+                font-size: 0.9rem;
+            }
+            
+            /* Adjust buttons for better touch targets */
+            .theme-toggle, .back-to-top {
+                width: 45px;
+                height: 45px;
+            }
+        }
+        
+        /* Small screens (mobile phones) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.8rem;
+            }
+            
+            .main-content {
+                padding: 1.2rem;
+                border-radius: 10px;
+                overflow-x: hidden;
+            }
+            
+            .sidebar {
+                padding: 1.2rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem !important;
+                margin-bottom: 1.2rem !important;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+                padding-bottom: 0.8rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.1rem;
+            }
+            
+            .nav-item {
+                padding: 0.6rem 1rem;
+            }
+            
+            .feature-card {
+                padding: 1.2rem;
+                margin: 1.5rem 0;
+                width: 100%;
+                overflow-x: hidden;
+            }
+            
+            /* Code block adjustments for small screens */
+            .code-block {
+                padding: 0.8rem;
+                overflow-x: auto;
+                max-width: 100%;
+                font-size: 0.8rem;
+                line-height: 1.6;
+                white-space: pre-wrap;
+                word-break: break-word;
+            }
+            
+            .code-block code {
+                font-size: 0.8rem;
+                white-space: pre-wrap;
+                word-break: break-word;
+                max-width: 100%;
+                display: block;
+            }
+            
+            /* Make the keymap display more manageable on tiny screens */
+            .keymap-diagram {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 0.3rem;
+            }
+            
+            .key {
+                padding: 0.7rem 0.3rem;
+                font-size: 0.8rem;
+            }
+            
+            /* Adjust timeline for small screens */
+            .timeline-step {
+                padding-left: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            /* Fix buttons for better mobile experience */
+            .theme-toggle, .back-to-top {
+                width: 40px;
+                height: 40px;
+                bottom: 15px;
+            }
+            
+            .back-to-top {
+                bottom: 65px;
+            }
+            
+            /* Make sure content doesn't overflow */
+            p, li, ul, ol {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                max-width: 100%;
+            }
+            
+            /* Ensure tables don't cause horizontal scrolling */
+            table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+        }
+        
+        /* Fix for ultra-small screens */
+        @media (max-width: 320px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .sidebar {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.6rem !important;
+            }
+            
+            .feature-card {
+                padding: 1rem;
+            }
+            
+            .code-block {
+                padding: 0.7rem;
+                font-size: 0.7rem;
+            }
+            
+            .code-block code {
+                font-size: 0.7rem;
+            }
+            
+            /* Minimize padding to maximize content space */
+            ul, ol {
+                padding-left: 1.2rem;
+            }
+        }
+
+        /* Print styles for documentation */
+        @media print {
+            body {
+                background: white;
+                font-size: 12pt;
+                color: black;
+            }
+            
+            .container {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+                padding: 0;
+            }
+            
+            .sidebar, .theme-toggle, .back-to-top {
+                display: none;
+            }
+            
+            .main-content {
+                box-shadow: none;
+                padding: 0;
+            }
+            
+            .code-block {
+                background: #f5f5f5;
+                color: #333;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+            
+            h2 {
+                page-break-after: avoid;
+            }
+            
+            h3, h4 {
+                page-break-after: avoid;
+            }
+            
+            p, ul, ol, dl, pre {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        section {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        section:nth-child(1) { animation-delay: 0.1s; }
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.3s; }
+        section:nth-child(4) { animation-delay: 0.4s; }
+        section:nth-child(5) { animation-delay: 0.5s; }
+        section:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Fix the code blocks on all screen sizes to prevent horizontal scrolling */
+        .code-block {
+            overflow-x: auto;
+        }
+        
+        .code-block code {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+        
+        /* Add basic table responsiveness */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        @media (max-width: 600px) {
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            /* Make images resize properly */
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <h3 style="margin-bottom: 1.5rem;">Documentation</h3>
+            <ul class="nav-list">
+                <li class="nav-item"><a href="#architecture" class="nav-link">🏛 Architecture</a></li>
+                <li class="nav-item"><a href="#file-handling" class="nav-link">📁 File Handling</a></li>
+                <li class="nav-item"><a href="#keymap-system" class="nav-link">⌨️ Keymap System</a></li>
+                <li class="nav-item"><a href="#playback-engine" class="nav-link">🎹 Playback Engine</a></li>
+                <li class="nav-item"><a href="#threading" class="nav-link">🧵 Threading Model</a></li>
+                <li class="nav-item"><a href="#error-handling" class="nav-link">⚠️ Error Handling</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">SkyAutoMusic Player Technical Deep Dive</h1>
+
+            <section id="architecture">
+                <h2>System Architecture</h2>
+                <div class="feature-card">
+                    <h3>Component Diagram</h3>
+                    <div class="timeline">
+                        <div class="timeline-step">
+                            <div class="timeline-bullet"></div>
+                            <h4>1. Core Modules</h4>
+                            <ul>
+                                <li>AHK Interface Layer</li>
+                                <li>Song Loader System</li>
+                                <li>Playback Controller</li>
+                                <li>UI Thread Manager</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-bullet"></div>
+                            <h4>2. Data Flow</h4>
+                            <p>Song Files → JSON Parser → Note Scheduler → AHK Output</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>How SkyAutoMusic Works: Overview</h3>
+                    <p>SkyAutoMusic is a Python-based auto-player that reads song files and converts them into keystrokes that play music in Sky: Children of the Light. Here's how the entire system works:</p>
+                    
+                    <h4>1. Initialization and Setup</h4>
+                    <p>When you start the application, it:</p>
+                    <ul>
+                        <li><strong>Imports Dependencies</strong> - The program starts by importing key libraries: <code>json</code> (for parsing song files), <code>time</code> (for timing playback), <code>keyboard</code> (for detecting key presses), <code>ahk</code> (for sending keystrokes), <code>threading</code> (for running background tasks), and <code>os</code> (for file operations).</li>
+                        <li><strong>Creates AHK Interface</strong> - Initializes the AutoHotkey interface with <code>ahk_script = ahk.AHK()</code> which will handle all the keyboard input simulation.</li>
+                        <li><strong>Sets Up Global Variables</strong> - Creates flags like <code>playing_song</code> and <code>stop_current_song</code> to track program state.</li>
+                    </ul>
+                    
+                    <h4>2. Background Thread for Key Monitoring</h4>
+                    <p>The program starts a dedicated background thread that constantly monitors the Escape key:</p>
+                    <ul>
+                        <li><strong>Non-blocking Monitoring</strong> - The <code>check_stop_thread</code> function runs in parallel to the main program.</li>
+                        <li><strong>Emergency Stop</strong> - When ESC is pressed during playback, it sets the <code>stop_current_song</code> flag to <code>True</code> and releases all held keys.</li>
+                        <li><strong>Thread Safety</strong> - The thread uses a small sleep interval (0.1s) to prevent excessive CPU usage while maintaining responsiveness.</li>
+                    </ul>
+                    
+                    <h4>3. Main Program Flow</h4>
+                    <p>The main program follows this sequence:</p>
+                    <ul>
+                        <li><strong>Keymap Selection</strong> - Asks the user to choose between different keyboard layouts (Normal or Sky).</li>
+                        <li><strong>Folder Selection</strong> - Prompts for the song folder location, with an option to change from the default.</li>
+                        <li><strong>Song Loading</strong> - Scans the chosen directory for song files and loads them into memory.</li>
+                        <li><strong>Song Selection</strong> - Displays all available songs and lets the user choose one to play.</li>
+                        <li><strong>Playback Control</strong> - Handles the actual playing of notes with precise timing.</li>
+                    </ul>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Main Program Structure</span>
+                        </div>
+                        <code># 1. Setup and initialize
+import required libraries
+setup AHK interface
+initialize global variables
+
+# 2. Start background thread
+start ESC key monitoring thread
+
+# 3. Prepare for playback
+select_keymap()  # Choose keyboard layout
+songs = load_songs_from_folder()  # Load song files
+
+# 4. Main program loop
+while True:
+    select a song to play
+    set playback parameters (speed, start position)
+    play the selected song
+    handle pause/resume/exit commands</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Input/Output System</h3>
+                    <p>SkyAutoMusic works by creating a bridge between stored song data and keyboard inputs:</p>
+                    
+                    <h4>Input: Song Files</h4>
+                    <ul>
+                        <li><strong>JSON Format</strong> - Songs are stored as JSON files containing note timing and key information.</li>
+                        <li><strong>File Structure</strong> - Each song includes metadata (name, author, BPM) and an array of notes with specific timings.</li>
+                        <li><strong>Example Note</strong> - <code>{"time": 1000, "key": "Key2"}</code> means "play the Key2 note at 1000ms from the start".</li>
+                    </ul>
+                    
+                    <h4>Output: Keyboard Simulation</h4>
+                    <ul>
+                        <li><strong>AHK Integration</strong> - The program uses the AutoHotkey library to simulate keyboard presses.</li>
+                        <li><strong>Key Mapping</strong> - The <code>keys</code> dictionary maps abstract notes (like "Key2") to actual keyboard keys (like "u").</li>
+                        <li><strong>Key Press Simulation</strong> - For each note, the program calls <code>ahk_script.key_down(key)</code> and schedules a release after the hold duration.</li>
+                    </ul>
+                    
+                    <p>This architecture creates a flexible system that can easily adapt to different keyboard layouts and play complex songs with precise timing.</p>
+                </div>
+            </section>
+
+            <section id="file-handling">
+                <h2>File Handling System</h2>
+                <div class="feature-card">
+                    <h3>Multi-Encoding Loader</h3>
+                    <p>The file loader attempts 6 different encodings with fallback:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python</span>
+                        </div>
+                        <code>encodings = [
+    'utf-16', 'utf-8', 'utf-8-sig',
+    'utf-16le', 'utf-16be', 'latin1'
+]</code>
+                    </div>
+                    <h3>File Validation</h3>
+                    <ul>
+                        <li>JSON schema validation</li>
+                        <li>Minimum note count check</li>
+                        <li>Time sequence verification</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Song File Loading Process</h3>
+                    <p>The file loading system is designed to be robust and handle various file formats and encodings. Here's how it works step by step:</p>
+                    
+                    <h4>1. Folder Selection</h4>
+                    <p>The program starts by establishing where to look for song files:</p>
+                    <ul>
+                        <li><strong>Default Location</strong> - Initially looks in a default directory (typically "D:\SkySongs").</li>
+                        <li><strong>User Override</strong> - When the program starts, it asks if you want to change the folder location.</li>
+                        <li><strong>Folder Dialog</strong> - If you choose to change folders, a file dialog opens to let you browse and select your preferred folder.</li>
+                        <li><strong>Path Verification</strong> - The program checks if the chosen path exists, and creates it if necessary.</li>
+                    </ul>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Folder Selection</span>
+                        </div>
+                        <code>def get_folder_path(default_path="D:\\SkySongs"):
+    print(f"Default songs folder: {default_path}")
+    change_folder = input("Do you want to change the songs folder? (y/n): ").lower()
+    
+    if change_folder == 'y':
+        print("Please select a folder in the dialog window...")
+        root = tk.Tk()
+        root.withdraw()  # Hide the main window
+        folder_path = filedialog.askdirectory(initialdir=os.path.dirname(default_path))
+        root.destroy()
+        
+        if folder_path:
+            print(f"Selected folder: {folder_path}")
+            return folder_path
+        else:
+            print("No folder selected, using default folder.")
+            return default_path
+    
+    return default_path</code>
+                    </div>
+                    
+                    <h4>2. Finding and Reading Files</h4>
+                    <p>Once the folder is selected, the program scans it for song files:</p>
+                    <ul>
+                        <li><strong>File Discovery</strong> - Uses <code>os.listdir()</code> to get all files in the chosen directory.</li>
+                        <li><strong>Filtering</strong> - Filters for files ending with ".txt" since songs are stored as text files.</li>
+                        <li><strong>Encoding Detection</strong> - Tries multiple encodings because song files may be saved with different text encodings.</li>
+                        <li><strong>Error Handling</strong> - If a file can't be read with any encoding, the program logs an error and continues with other files.</li>
+                    </ul>
+                    
+                    <h4>3. Parsing the JSON Data</h4>
+                    <p>After successfully reading a file, the program needs to parse its contents:</p>
+                    <ul>
+                        <li><strong>JSON Parsing</strong> - Uses Python's <code>json.loads()</code> to convert the text content into a Python data structure.</li>
+                        <li><strong>Structure Detection</strong> - Checks if the JSON represents an array of songs or a single song object.</li>
+                        <li><strong>Data Extraction</strong> - If it's an array, gets the first song; otherwise uses the entire object as a song.</li>
+                        <li><strong>Collection Building</strong> - Adds each valid song to a songs collection that will be presented to the user.</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Song File Structure Explained</h3>
+                    <p>Understanding the structure of song files is key to how SkyAutoMusic works:</p>
+                    
+                    <h4>JSON Format Overview</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">JSON - Typical Song File</span>
+                        </div>
+                        <code>{
+    "name": "River Flows in You",
+    "author": "Yiruma",
+    "transcribedBy": "SkyMusic Team",
+    "bpm": 120,
+    "pitchLevel": 0,
+    "songNotes": [
+        {"time": 0, "key": "1Key5"},
+        {"time": 500, "key": "Key2"},
+        {"time": 750, "key": "Key7"},
+        {"time": 1000, "key": "2Key0"}
+    ]
+}</code>
+                    </div>
+                    
+                    <h4>Key Components</h4>
+                    <ul>
+                        <li><strong>Metadata</strong> - Information about the song such as name, composer, transcriber, and tempo (BPM).</li>
+                        <li><strong>Note Data</strong> - The <code>songNotes</code> array contains the actual notes to be played:
+                            <ul>
+                                <li><code>time</code>: The time in milliseconds when the note should be played, measured from the start of the song.</li>
+                                <li><code>key</code>: The identifier of the note to play, which will be mapped to an actual keyboard key.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <h4>Implementation in Code</h4>
+                    <p>The core loading function that processes these files is implemented as:</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - File Loading Logic</span>
+                        </div>
+                        <code>def load_songs_from_folder(folder_path=None):
+    if folder_path is None:
+        folder_path = get_folder_path()
+        
+    songs = []
+
+    # Create the songs folder if it doesn't exist
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        print(f"Created songs folder at: {os.path.abspath(folder_path)}")
+        print("Please add song text files to this folder.")
+        return songs
+
+    # List of encodings to try
+    encodings = ['utf-16', 'utf-8', 'utf-8-sig', 'utf-16le', 'utf-16be', 'latin1']
+
+    # Load all .txt files from the folder
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".txt"):
+            file_path = os.path.join(folder_path, filename)
+            success = False
+
+            # Try each encoding until one works
+            for encoding in encodings:
+                try:
+                    with open(file_path, 'r', encoding=encoding) as file:
+                        content = file.read()
+                        # Parse the content as JSON
+                        song_data = json.loads(content)
+
+                        # Handle both array and single song formats
+                        if isinstance(song_data, list) and len(song_data) > 0:
+                            song = song_data[0]
+                            songs.append(song)
+                        else:
+                            songs.append(song_data)
+
+                        success = True
+                        break
+                except (UnicodeDecodeError, json.JSONDecodeError):
+                    continue
+                except Exception as e:
+                    print(f"Error reading file '{filename}': {str(e)}")
+
+            if not success:
+                print(f"Could not read file '{filename}' with any encoding")
+
+    return songs</code>
+                    </div>
+                </div>
+            </section>
+
+            <section id="keymap-system">
+                <h2>Keymap Configuration</h2>
+                <div class="feature-card">
+                    <h3>Keyboard Layout Visualization</h3>
+                    <div class="keymap-diagram">
+                        <!-- Normal Keymap -->
+                        <div class="key">t</div>
+                        <div class="key">y</div>
+                        <div class="key">u</div>
+                        <div class="key">i</div>
+                        <div class="key">o</div>
+                        <div class="key">p</div>
+                        <div class="key">a</div>
+                        <div class="key">s</div>
+                        <div class="key">d</div>
+                        <div class="key">f</div>
+                        <div class="key">g</div>
+                        <div class="key">h</div>
+                        <div class="key">j</div>
+                        <div class="key">k</div>
+                        <div class="key">l</div>
+                    </div>
+                    <p>Three octave support through key prefixes:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python</span>
+                        </div>
+                        <code>"KeyX"   # Base octave
+"1KeyX"  # First octave
+"2KeyX"  # Second octave</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>How the Keymap System Works</h3>
+                    <p>The keymap system is a critical component that translates abstract notes from song files into physical keyboard keys. Here's a detailed look at how it works:</p>
+                    
+                    <h4>Keymap Structure</h4>
+                    <p>At its core, the keymap is a Python dictionary that maps note identifiers to keyboard keys:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Normal Keymap</span>
+                        </div>
+                        <code>def get_normal_keymap():
+    return {
+        "1Key0": "t",
+        "1Key1": "y",
+        "1Key2": "u",
+        "1Key3": "i",
+        "1Key4": "o",
+        "1Key5": "p",
+        "1Key6": "a",
+        "1Key7": "s",
+        "1Key8": "d",
+        "1Key9": "f",
+        "1Key10": "g",
+        "1Key11": "h",
+        "1Key12": "j",
+        "1Key13": "k",
+        "1Key14": "l",
+
+        "Key0": "t",
+        "Key1": "y",
+        "Key2": "u",
+        # ... and so on for all keys
+    }</code>
+                    </div>
+                    
+                    <h4>Multiple Keymap Options</h4>
+                    <p>The program supports multiple keyboard layouts to accommodate different preferences:</p>
+                    <ul>
+                        <li><strong>Normal Keymap:</strong> Uses keys like t, y, u, i, o, p, a, s, d, f, g, h, j, k, l.</li>
+                        <li><strong>Sky Keymap:</strong> Uses keys like y, u, i, o, p, h, j, k, l, ;, n, m, ,, ., /.</li>
+                    </ul>
+                    <p>When the program starts, users can choose which layout they prefer:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Keymap Selection</span>
+                        </div>
+                        <code>def select_keymap():
+    print("\nSelect a keymap:")
+    print("1. Normal")
+    print("2. Sky")
+    
+    while True:
+        choice = input("Enter your choice (1 or 2): ")
+        if choice == "1":
+            print("Using Normal keymap")
+            return get_normal_keymap()
+        elif choice == "2":
+            print("Using Sky keymap")
+            return get_sky_keymap()
+        else:
+            print("Invalid choice. Please enter 1 or 2.")</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Octave System Explained</h3>
+                    <p>SkyAutoMusic supports multiple octaves to play a wider range of notes using the same physical keys:</p>
+                    
+                    <h4>How Octaves Work</h4>
+                    <ul>
+                        <li><strong>Base Octave:</strong> Notes represented as "KeyX" (e.g., "Key0", "Key1")</li>
+                        <li><strong>First Octave:</strong> Notes represented as "1KeyX" (e.g., "1Key0", "1Key1")</li>
+                        <li><strong>Second Octave:</strong> Notes represented as "2KeyX" (e.g., "2Key0", "2Key1")</li>
+                    </ul>
+                    <p>All three octaves map to the same physical keys on your keyboard. The prefixes are just identifiers that the song files use to indicate which note within which octave to play.</p>
+                    
+                    <h4>Example: Playing Across Octaves</h4>
+                    <p>In the song data, notes from different octaves might appear in sequence:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">JSON - Notes Across Octaves</span>
+                        </div>
+                        <code>[
+    {"time": 0, "key": "1Key5"},     // Higher octave P key
+    {"time": 500, "key": "Key2"},    // Middle octave U key
+    {"time": 1000, "key": "2Key0"}   // Lower octave T key
+]</code>
+                    </div>
+                    <p>When playing this sequence, the program will press the "p" key, then "u", then "t", simulating a melody that spans multiple octaves while using the same physical keys.</p>
+                    
+                    <h4>Real-World Usage</h4>
+                    <p>This system provides several advantages:</p>
+                    <ul>
+                        <li><strong>Extended Range:</strong> Allows songs to use up to 45 different notes (15 keys × 3 octaves).</li>
+                        <li><strong>Consistent Layout:</strong> Players only need to learn one physical keyboard layout.</li>
+                        <li><strong>Flexible Notation:</strong> Song creators can specify notes in the most natural octave for reading.</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Key Mapping Implementation</h3>
+                    <p>During playback, the program converts song note identifiers to actual keys to press:</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Key Conversion</span>
+                        </div>
+                        <code># When playing a note
+for note in notes:
+    key = keys.get(note["key"], note["key"])
+    ahk_script.key_down(key)
+    # Schedule release time
+    release_time = note_time + (key_hold_duration * 1000 / speed_factor)
+    active_notes[key] = release_time</code>
+                    </div>
+                    
+                    <p>The <code>keys.get(note["key"], note["key"])</code> line is important - it looks up the physical key corresponding to the note identifier. If no mapping exists, it falls back to using the identifier itself as the key.</p>
+                    
+                    <h4>Key Press Mechanics</h4>
+                    <p>The program simulates key presses with precise timing:</p>
+                    <ul>
+                        <li><strong>Press:</strong> Using <code>ahk_script.key_down(key)</code> to press a key</li>
+                        <li><strong>Release:</strong> Using <code>ahk_script.key_up(key)</code> to release it after the duration</li>
+                        <li><strong>Scheduling:</strong> Each key tracks its release time in the <code>active_notes</code> dictionary</li>
+                        <li><strong>Key Management:</strong> The program constantly checks if keys need to be released based on their scheduled times</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="playback-engine">
+                <h2>Playback Engine Details</h2>
+                <div class="feature-card">
+                    <h3>Timing Precision System</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python</span>
+                        </div>
+                        <code># Core timing calculation
+release_time = note_time + (key_hold_duration * 1000 / speed_factor)
+current_time = (time.time() - start_timer) * 1000 * speed_factor</code>
+                    </div>
+                    
+                    <h3>State Management</h3>
+                    <ul>
+                        <li>Active note tracking dictionary</li>
+                        <li>Pause/resume time compensation</li>
+                        <li>Garbage collection for released notes</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>How the Playback Engine Works</h3>
+                    <p>The heart of SkyAutoMusic is its playback engine, which handles the precise timing of when to press and release keys. Here's a detailed explanation of how it works:</p>
+                    
+                    <h4>Playback Initialization</h4>
+                    <p>Before playback begins, the program performs several setup steps:</p>
+                    <ul>
+                        <li><strong>Speed Factor Selection:</strong> Users can specify how fast the song should play (e.g., 1.0 = normal speed, 0.5 = half speed)</li>
+                        <li><strong>Starting Position:</strong> Users can choose to start from anywhere in the song (measured in minutes and seconds)</li>
+                        <li><strong>Timer Setup:</strong> A timer starts tracking elapsed time since the beginning of playback</li>
+                        <li><strong>Note Preparation:</strong> Notes are filtered to include only those after the chosen start position</li>
+                    </ul>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Playback Initialization</span>
+                        </div>
+                        <code># Ask for speed factor
+speed_factor = float(input("Enter the speed factor: "))
+
+# Ask for starting position
+start_position_input = input("Enter the starting position (e.g. '3m 15s' or '0'): ")
+if start_position_input.strip() == '0':
+    start_position = 0
+else:
+    # Parse minutes and seconds
+    start_position_minutes = int(start_position_input.split('m')[0].strip())
+    start_position_seconds = int(start_position_input.split('m')[1].split('s')[0].strip())
+    start_position = (start_position_minutes * 60 + start_position_seconds) * 1000
+
+# Skip notes before the starting position
+song["songNotes"] = [note for note in song["songNotes"] if note["time"] >= start_position]
+
+# Start the playback timer
+start_timer = time.time() - (start_position / (1000 * speed_factor))</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Timing and Synchronization</h3>
+                    <p>The playback engine uses sophisticated timing calculations to ensure notes play at exactly the right time:</p>
+                    
+                    <h4>Time Calculation</h4>
+                    <ul>
+                        <li><strong>Real Time to Song Time:</strong> <code>(time.time() - start_timer) * 1000 * speed_factor</code> converts the elapsed real-world time to song time in milliseconds, adjusted for speed.</li>
+                        <li><strong>Release Timing:</strong> <code>release_time = note_time + (key_hold_duration * 1000 / speed_factor)</code> calculates when a key should be released after being pressed.</li>
+                        <li><strong>Pause Compensation:</strong> <code>paused_time</code> tracks how long the song has been paused to adjust the overall timing.</li>
+                    </ul>
+                    
+                    <h4>The Main Playback Loop</h4>
+                    <p>The core of the playback engine is a loop that:</p>
+                    <ol>
+                        <li>Groups notes by their timestamp to play simultaneous notes together</li>
+                        <li>Waits until the current elapsed time matches the timestamp of the next note group</li>
+                        <li>Handles pause/resume functionality when the spacebar is pressed</li>
+                        <li>Tracks which keys are being held down and when they should be released</li>
+                        <li>Updates the current playback position in real-time</li>
+                    </ol>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Main Playback Loop</span>
+                        </div>
+                        <code># Group notes by time
+notes_by_time = {}
+for note in song["songNotes"]:
+    if note["time"] not in notes_by_time:
+        notes_by_time[note["time"]] = []
+    notes_by_time[note["time"]].append(note)
+
+# Track active notes and their release times
+active_notes = {}
+
+for note_time, notes in notes_by_time.items():
+    # Wait until it's time to play these notes
+    while (time.time() - start_timer - paused_time) * 1000 * speed_factor < note_time:
+        # Check for pause/resume (spacebar)
+        if keyboard.is_pressed('space'):
+            playing = not playing
+            pause_start_time = time.time()
+            time.sleep(0.2)
+            
+        # Release any keys that have reached their release time
+        current_time = (time.time() - start_timer - paused_time) * 1000 * speed_factor
+        keys_to_release = []
+        for key, release_time in active_notes.items():
+            if current_time >= release_time:
+                ahk_script.key_up(key)
+                keys_to_release.append(key)
+                
+        # Remove released keys from tracking
+        for key in keys_to_release:
+            active_notes.pop(key)
+            
+        # Display current playback position
+        current_duration = current_time - start_position
+        current_duration_minutes, current_duration_seconds = divmod(current_duration / 1000, 60)
+        print(f"\rCurrent second: {int(current_duration_minutes)}m {int(current_duration_seconds)}s", end="")
+        
+        # Prevent CPU overload
+        time.sleep(0.01)
+        
+    # Play all notes at the current timestamp
+    for note in notes:
+        key = keys.get(note["key"], note["key"])
+        ahk_script.key_down(key)
+        release_time = note_time + (key_hold_duration * 1000 / speed_factor)
+        active_notes[key] = release_time</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Playback Control Features</h3>
+                    <p>The playback engine includes several features that give users control during playback:</p>
+                    
+                    <h4>1. Pause and Resume</h4>
+                    <p>Users can press the spacebar at any time to pause/resume playback:</p>
+                    <ul>
+                        <li><strong>Pause Logic:</strong> When paused, the program records the pause start time.</li>
+                        <li><strong>Time Compensation:</strong> When resumed, it adds the paused duration to the <code>paused_time</code> counter, ensuring that timing remains accurate.</li>
+                        <li><strong>Feedback:</strong> The program prints "Paused" or "Playing" status messages.</li>
+                    </ul>
+                    
+                    <h4>2. Emergency Stop</h4>
+                    <p>Pressing the ESC key immediately stops playback:</p>
+                    <ul>
+                        <li><strong>Background Monitoring:</strong> The stop check thread constantly watches for ESC press.</li>
+                        <li><strong>Clean Release:</strong> All currently pressed keys are released to prevent stuck notes.</li>
+                        <li><strong>Return to Menu:</strong> Control returns to the song selection menu.</li>
+                    </ul>
+                    
+                    <h4>3. Speed Control</h4>
+                    <p>Before playback starts, users can set the playback speed:</p>
+                    <ul>
+                        <li><strong>Speed Factor:</strong> A multiplication factor applied to all timing calculations.</li>
+                        <li><strong>Examples:</strong> 1.0 = normal speed, 0.5 = half speed, 2.0 = double speed.</li>
+                        <li><strong>Hold Duration Adjustment:</strong> Note hold duration is automatically scaled based on speed.</li>
+                    </ul>
+                    
+                    <h4>4. Real-time Progress Display</h4>
+                    <p>During playback, the current position in the song is displayed:</p>
+                    <ul>
+                        <li><strong>Time Formatting:</strong> Position is shown in minutes and seconds.</li>
+                        <li><strong>Real-time Updates:</strong> The display updates continuously as the song plays.</li>
+                        <li><strong>Inline Printing:</strong> Uses the <code>\r</code> carriage return for in-place updates.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="threading">
+                <h2>Concurrency Model</h2>
+                <div class="feature-card">
+                    <h3>Thread Architecture</h3>
+                    <div class="timeline">
+                        <div class="timeline-step">
+                            <div class="timeline-bullet"></div>
+                            <h4>Main Thread</h4>
+                            <ul>
+                                <li>UI Presentation</li>
+                                <li>Playback Control</li>
+                                <li>User Input Handling</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-bullet"></div>
+                            <h4>Worker Thread</h4>
+                            <ul>
+                                <li>ESC Key Monitoring</li>
+                                <li>Emergency Stop Execution</li>
+                                <li>Key State Cleanup</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>How Threading Works in SkyAutoMusic</h3>
+                    <p>SkyAutoMusic utilizes a multi-threaded architecture to handle both user input and playback simultaneously. This design allows the program to respond to user commands (like ESC to stop) even during intense playback sequences.</p>
+                    
+                    <h4>Thread Creation and Management</h4>
+                    <p>The program creates a separate background thread at startup for monitoring key presses:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Thread Setup</span>
+                        </div>
+                        <code># Function to check for stop key in background
+def check_stop_thread():
+    global playing_song, stop_current_song
+    while True:
+        if keyboard.is_pressed('esc') and playing_song:
+            print("\nStopping playback and returning to song selection...")
+            stop_current_song = True
+            # Release all keys that might be held
+            for key in keys.values():
+                ahk_script.key_up(key)
+            time.sleep(0.5)  # Prevent multiple triggers
+        time.sleep(0.1)  # Prevent excessive CPU usage
+
+# Start the stop checker thread
+stop_thread = threading.Thread(target=check_stop_thread, daemon=True)
+stop_thread.start()</code>
+                    </div>
+                    
+                    <h4>Thread Coordination</h4>
+                    <p>The main and worker threads coordinate through shared variables and flags:</p>
+                    <ul>
+                        <li><strong>Global Flags:</strong> <code>playing_song</code> and <code>stop_current_song</code> are used for communication between threads.</li>
+                        <li><strong>Thread Safety:</strong> Simple boolean flags don't require locks because reads/writes are atomic in Python.</li>
+                        <li><strong>Daemon Mode:</strong> The worker thread is created with <code>daemon=True</code>, which means it will automatically terminate when the main program exits.</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Thread Responsibilities</h3>
+                    
+                    <h4>Main Thread:</h4>
+                    <p>The main thread is responsible for most of the program's functionality:</p>
+                    <ul>
+                        <li><strong>User Interface:</strong> Displays menus, song lists, and prompts for user input.</li>
+                        <li><strong>Song Selection:</strong> Handles the process of choosing songs and playback parameters.</li>
+                        <li><strong>File Loading:</strong> Reads and parses song files from the selected directory.</li>
+                        <li><strong>Note Playback:</strong> Manages the main playback loop for all notes in a song.</li>
+                        <li><strong>Pause/Resume:</strong> Handles the space key for pausing and resuming playback.</li>
+                    </ul>
+                    
+                    <h4>Background Worker Thread:</h4>
+                    <p>The worker thread has a more focused set of responsibilities:</p>
+                    <ul>
+                        <li><strong>Key Monitoring:</strong> Continuously checks if the ESC key has been pressed.</li>
+                        <li><strong>Emergency Stop:</strong> Sets the <code>stop_current_song</code> flag when ESC is detected during playback.</li>
+                        <li><strong>Key Release:</strong> Makes sure all keys are released when playback is stopped with ESC.</li>
+                    </ul>
+                    
+                    <p>This separation of concerns ensures that the program remains responsive at all times, allowing users to stop playback instantly even if the main thread is busy with note scheduling or playback operations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Benefits of Multi-threading</h3>
+                    <p>The threading model provides several key advantages:</p>
+                    
+                    <h4>1. Responsiveness</h4>
+                    <p>Without threading, the program would have to check for user input between note events, which could lead to delayed responses when the main thread is busy. With threading, the ESC key check runs continuously in the background, ensuring immediate response.</p>
+                    
+                    <h4>2. Clean Emergency Stops</h4>
+                    <p>When a user hits ESC to stop playback, the background thread can immediately release all held keys, preventing "stuck notes" that would continue to play indefinitely.</p>
+                    
+                    <h4>3. Simplified Main Loop</h4>
+                    <p>The main playback loop can focus solely on timing and note scheduling, without being cluttered with extra code for emergency stop detection.</p>
+                    
+                    <h4>4. Minimal Resource Usage</h4>
+                    <p>The worker thread uses <code>time.sleep(0.1)</code> to check for ESC presses 10 times per second, which keeps CPU usage low while still being responsive enough for user input.</p>
+                </div>
+            </section>
+
+            <section id="error-handling">
+                <h2>Error Handling</h2>
+                <div class="feature-card">
+                    <h3>Robust Exception Management</h3>
+                    <div class="timeline">
+                        <div class="timeline-step">
+                            <div class="timeline-bullet"></div>
+                            <h4>1. File Loading Failures</h4>
+                            <ul>
+                                <li>Multi-encoding fallback system</li>
+                                <li>Graceful handling of corrupt JSON</li>
+                                <li>User notification for inaccessible files</li>
+                            </ul>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-bullet"></div>
+                            <h4>2. Playback Recovery</h4>
+                            <ul>
+                                <li>Automatic key release on error</li>
+                                <li>Context-aware error messages</li>
+                                <li>Song selection preservation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <h3>Diagnostic Tools</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python</span>
+                        </div>
+                        <code>try:
+    song_data = json.loads(content)
+except (UnicodeDecodeError, json.JSONDecodeError):
+    continue  # Try the next encoding
+except Exception as e:
+    print(f"Error reading file '{filename}': {str(e)}")</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Error Handling Strategies</h3>
+                    <p>SkyAutoMusic is designed to be robust and fault-tolerant, with comprehensive error handling throughout the codebase. Here's how errors are managed in different areas:</p>
+                    
+                    <h4>File Reading and Parsing</h4>
+                    <p>When loading song files, multiple layers of error handling ensure that problems with individual files don't crash the program:</p>
+                    <ul>
+                        <li><strong>Multi-Encoding Attempts:</strong> The program tries six different text encodings for each file before giving up.</li>
+                        <li><strong>JSON Parsing Errors:</strong> Invalid JSON is caught and reported, allowing the program to continue with other files.</li>
+                        <li><strong>File Access Issues:</strong> Problems with file permissions or missing files are handled gracefully.</li>
+                        <li><strong>Malformed Data:</strong> The program checks if loaded data has the expected structure before using it.</li>
+                    </ul>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Song Loading Error Handling</span>
+                        </div>
+                        <code>for filename in os.listdir(folder_path):
+    if filename.endswith(".txt"):
+        file_path = os.path.join(folder_path, filename)
+        success = False
+
+        # Try each encoding until one works
+        for encoding in encodings:
+            try:
+                with open(file_path, 'r', encoding=encoding) as file:
+                    content = file.read()
+                    song_data = json.loads(content)
+                    
+                    # Verify data structure
+                    if isinstance(song_data, list) and len(song_data) > 0:
+                        song = song_data[0]
+                        songs.append(song)
+                    else:
+                        songs.append(song_data)
+                        
+                    success = True
+                    break
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                continue  # Silent failure, try next encoding
+            except Exception as e:
+                print(f"Error reading file '{filename}' with {encoding} encoding: {str(e)}")
+                
+        if not success:
+            print(f"Could not read file '{filename}' with any of the attempted encodings")</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Runtime Error Management</h3>
+                    <p>During playback, various mechanisms prevent errors from disrupting the user experience:</p>
+                    
+                    <h4>Key Mapping Fallbacks</h4>
+                    <p>When the program encounters an unknown note identifier, it uses a fallback mechanism:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Key Mapping Fallback</span>
+                        </div>
+                        <code># The second argument is the fallback value if the key isn't found
+key = keys.get(note["key"], note["key"])</code>
+                    </div>
+                    <p>This means that if a song file uses an unexpected note name, the program will try to use that name directly as a keyboard key rather than crashing.</p>
+                    
+                    <h4>User Input Validation</h4>
+                    <p>When collecting user input, the program validates the data and provides helpful feedback:</p>
+                    <ul>
+                        <li><strong>Keymap Selection:</strong> Loops until a valid choice (1 or 2) is provided.</li>
+                        <li><strong>Song Number:</strong> Checks that selected song numbers are within the valid range.</li>
+                        <li><strong>Starting Position:</strong> Handles various input formats for time specification.</li>
+                        <li><strong>Speed Factor:</strong> Converts input to float with appropriate error handling.</li>
+                    </ul>
+                    
+                    <h4>Emergency Recovery</h4>
+                    <p>The background thread provides a safety net for recovering from problems during playback:</p>
+                    <ul>
+                        <li><strong>Key Release:</strong> In case of errors, all currently pressed keys are released to prevent stuck notes.</li>
+                        <li><strong>State Reset:</strong> Global flags are reset to ensure the program can return to a clean state.</li>
+                        <li><strong>User Notification:</strong> Clear error messages explain what went wrong and what the user should do next.</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Defensive Programming Techniques</h3>
+                    <p>Throughout the codebase, defensive programming techniques ensure stability:</p>
+                    
+                    <h4>Type Checking</h4>
+                    <p>Before operating on data, the program often verifies its type:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">Python - Type Verification</span>
+                        </div>
+                        <code>if isinstance(song_data, list) and len(song_data) > 0:
+    # Handle array of songs
+    song = song_data[0]
+    songs.append(song)
+else:
+    # Handle single song object
+    songs.append(song_data)</code>
+                    </div>
+                    
+                    <h4>Default Values</h4>
+                    <p>The program uses sensible defaults to handle missing information:</p>
+                    <ul>
+                        <li><strong>Song Metadata:</strong> <code>song.get("name", None)</code> safely retrieves metadata that might be missing.</li>
+                        <li><strong>Folder Paths:</strong> If no folder is selected, falls back to the default path.</li>
+                        <li><strong>Starting Position:</strong> Defaults to 0 (start of song) if not specified.</li>
+                    </ul>
+                    
+                    <h4>Resource Cleanup</h4>
+                    <p>The program ensures resources are properly released in all scenarios:</p>
+                    <ul>
+                        <li><strong>File Handles:</strong> Uses context managers (<code>with</code> statements) to ensure files are always closed.</li>
+                        <li><strong>UI Windows:</strong> Calls <code>root.destroy()</code> to clean up Tkinter resources after use.</li>
+                        <li><strong>Key States:</strong> Makes sure all keys are released when playback ends, even if abnormally terminated.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Interactive floating buttons -->
+    <button class="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <button class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Toggle dark mode
+        const themeToggle = document.querySelector('.theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+
+        // Back to top button
+        const backToTopButton = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Enhanced interactivity for feature cards
+        document.querySelectorAll('.feature-card h3').forEach(header => {
+            header.style.cursor = 'pointer';
+            
+            // Store initial state of all content
+            const content = header.nextElementSibling;
+            const initialState = window.getComputedStyle(content).display;
+            
+            // Add click event to toggle content
+            header.addEventListener('click', () => {
+                const allContents = document.querySelectorAll('.feature-card h3 + *');
+                
+                // Toggle current content with animation
+                if (content.style.display === 'none') {
+                    // Expand this section
+                    content.style.display = initialState;
+                    header.classList.add('expanded');
+                    
+                    // Add subtle animation effect
+                    content.style.opacity = '0';
+                    content.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        content.style.opacity = '1';
+                        content.style.transform = 'translateY(0)';
+                    }, 10);
+                } else {
+                    // Collapse this section
+                    content.style.opacity = '0';
+                    content.style.transform = 'translateY(-10px)';
+                    header.classList.remove('expanded');
+                    
+                    setTimeout(() => {
+                        content.style.display = 'none';
+                    }, 200);
+                }
+            });
+        });
+
+        // Process code blocks for better readability and prevent horizontal scrolling on mobile
+        document.querySelectorAll('.code-block').forEach(block => {
+            const codeElement = block.querySelector('code');
+            if (codeElement) {
+                // Apply responsive styles to code blocks
+                const content = codeElement.innerHTML;
+                const processedContent = content
+                    .split('\n')
+                    .map(line => {
+                        // Process line for better mobile display
+                        return line.replace(/\t/g, '  '); // Replace tabs with spaces
+                    })
+                    .join('\n');
+                
+                // Update the code content
+                codeElement.innerHTML = processedContent;
+                
+                // Apply syntax highlighting
+                const keywords = ['function', 'def', 'return', 'import', 'class', 'while', 'try', 'except', 'if', 'else', 'for', 'in', 'continue', 'break', 'and', 'or', 'not'];
+                
+                // Highlight keywords
+                keywords.forEach(word => {
+                    const regex = new RegExp(`\\b${word}\\b`, 'g');
+                    codeElement.innerHTML = codeElement.innerHTML.replace(regex, `<span class="code-keyword">${word}</span>`);
+                });
+                
+                // Highlight strings
+                codeElement.innerHTML = codeElement.innerHTML.replace(/'([^']*)'/g, '<span class="code-string">\'$1\'</span>');
+                codeElement.innerHTML = codeElement.innerHTML.replace(/"([^"]*)"/g, '<span class="code-string">"$1"</span>');
+                
+                // Highlight comments
+                codeElement.innerHTML = codeElement.innerHTML.replace(/(#.*)$/gm, '<span class="code-comment">$1</span>');
+                
+                // Highlight numbers
+                codeElement.innerHTML = codeElement.innerHTML.replace(/\b(\d+)\b/g, '<span class="code-number">$1</span>');
+                
+                // Highlight function calls
+                codeElement.innerHTML = codeElement.innerHTML.replace(/([a-zA-Z_][a-zA-Z0-9_]*)\(/g, '<span class="code-function">$1</span>(');
+            }
+        });
+
+        // Fix mobile viewport issues
+        function fixMobileView() {
+            if (window.innerWidth <= 480) {
+                // Ensure code blocks don't cause horizontal scrolling
+                document.querySelectorAll('.code-block').forEach(block => {
+                    block.style.maxWidth = '100%';
+                    block.style.wordWrap = 'break-word';
+                });
+                
+                // Set keymap layout to grid with 5 columns
+                const keymap = document.querySelector('.keymap-diagram');
+                if (keymap) {
+                    keymap.style.gridTemplateColumns = 'repeat(5, 1fr)';
+                }
+            }
+        }
+
+        // Run on load and resize
+        window.addEventListener('load', fixMobileView);
+        window.addEventListener('resize', fixMobileView);
+
+        // Interactive keymap visualization 
+        document.querySelectorAll('.key').forEach(key => {
+            key.addEventListener('click', () => {
+                // Reset all keys
+                document.querySelectorAll('.key').forEach(k => {
+                    k.style.transform = 'translateY(0)';
+                    k.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                });
+                
+                // Animate the clicked key
+                key.style.transform = 'translateY(-5px)';
+                key.style.boxShadow = '0 8px 15px rgba(0,0,0,0.2)';
+                
+                // Reset after a delay
+                setTimeout(() => {
+                    key.style.transform = 'translateY(0)';
+                    key.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                }, 500);
+            });
+        });
+
+        // Improved scroll spy for sidebar with smooth animation
+        const sections = document.querySelectorAll('section');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Add keyboard shortcut for dark mode toggle (Alt+D)
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.key === 'd') {
+                themeToggle.click();
+            }
+        });
+
+        // Add section transitions on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial opacity to 0 for all sections
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                
+                // Stagger the animations
+                setTimeout(() => {
+                    section.style.opacity = '1';
+                }, 100 * index);
+            });
+            
+            // Fix mobile view
+            fixMobileView();
+        });
+    </script>
+</body>
+</html>
