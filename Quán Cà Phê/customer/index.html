@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quán Cà Phê - Order Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase dependencies -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="../firebase-config.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Quán Cà Phê</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#cart" id="cart-button">
+                    <span class="cart-icon">🛒</span>
+                    <span id="cart-count">0</span>
+                </a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Welcome to Our Coffee Shop</h2>
+            <p>Experience the finest coffee in town</p>
+        </div>
+    </section>
+
+    <section id="menu" class="menu-section">
+        <h2>Our Menu</h2>
+        
+        <div class="menu-category">
+            <h3>Coffee</h3>
+            <div class="menu-items" id="coffee-items">
+                <div class="menu-item" data-id="1" data-name="Espresso" data-price="3.50">
+                    <img src="../images/espresso.jpg" alt="Espresso">
+                    <h4>Espresso</h4>
+                    <p class="description">Strong and pure coffee shot</p>
+                    <p class="price">$3.50</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item" data-id="2" data-name="Cappuccino" data-price="4.50">
+                    <img src="../images/cappuccino.jpg" alt="Cappuccino">
+                    <h4>Cappuccino</h4>
+                    <p class="description">Espresso with steamed milk and foam</p>
+                    <p class="price">$4.50</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item" data-id="3" data-name="Latte" data-price="4.75">
+                    <img src="../images/latte.jpg" alt="Latte">
+                    <h4>Latte</h4>
+                    <p class="description">Espresso with steamed milk</p>
+                    <p class="price">$4.75</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="menu-category">
+            <h3>Tea</h3>
+            <div class="menu-items" id="tea-items">
+                <div class="menu-item" data-id="4" data-name="Green Tea" data-price="3.25">
+                    <img src="../images/green-tea.jpg" alt="Green Tea">
+                    <h4>Green Tea</h4>
+                    <p class="description">Refreshing traditional green tea</p>
+                    <p class="price">$3.25</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item" data-id="5" data-name="Black Tea" data-price="3.25">
+                    <img src="../images/black-tea.jpg" alt="Black Tea">
+                    <h4>Black Tea</h4>
+                    <p class="description">Strong and aromatic black tea</p>
+                    <p class="price">$3.25</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="menu-category">
+            <h3>Pastries</h3>
+            <div class="menu-items" id="pastry-items">
+                <div class="menu-item" data-id="6" data-name="Croissant" data-price="2.75">
+                    <img src="../images/croissant.jpg" alt="Croissant">
+                    <h4>Croissant</h4>
+                    <p class="description">Buttery, flaky French pastry</p>
+                    <p class="price">$2.75</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item" data-id="7" data-name="Chocolate Muffin" data-price="3.00">
+                    <img src="../images/chocolate-muffin.jpg" alt="Chocolate Muffin">
+                    <h4>Chocolate Muffin</h4>
+                    <p class="description">Rich chocolate muffin</p>
+                    <p class="price">$3.00</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <h2>About Us</h2>
+        <div class="about-content">
+            <div class="about-image">
+                <img src="../images/coffee-shop.jpg" alt="Our Coffee Shop">
+            </div>
+            <div class="about-text">
+                <p>We are a cozy coffee shop dedicated to providing high-quality coffee and a relaxing atmosphere for our guests. Our beans are sourced from sustainable farms and roasted to perfection.</p>
+                <p>Visit us today and experience the difference quality makes!</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Your Order</h2>
+            <div id="cart-items">
+                <!-- Cart items will be added here dynamically -->
+            </div>
+            <div class="cart-total">
+                <p>Total: $<span id="cart-total">0.00</span></p>
+            </div>
+            <form id="order-form">
+                <h3>Your Information</h3>
+                <div class="form-group">
+                    <label for="customer-name">Name:</label>
+                    <input type="text" id="customer-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="table-number">Table Number:</label>
+                    <input type="number" id="table-number" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="special-instructions">Special Instructions:</label>
+                    <textarea id="special-instructions"></textarea>
+                </div>
+                <button type="submit" id="place-order">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="order-confirmation" class="modal">
+        <div class="modal-content">
+            <span class="close-confirmation">&times;</span>
+            <h2>Order Confirmed!</h2>
+            <p>Your order has been sent to our kitchen.</p>
+            <p>Order Number: <span id="order-number"></span></p>
+            <p>Thank you for your order!</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>Quán Cà Phê</h3>
+                <p>123 Coffee Street, City</p>
+                <p>Phone: (123) 456-7890</p>
+                <p>Email: info@quancaphe.com</p>
+            </div>
+            <div class="footer-hours">
+                <h3>Opening Hours</h3>
+                <p>Monday - Friday: 7:00 AM - 8:00 PM</p>
+                <p>Saturday - Sunday: 8:00 AM - 9:00 PM</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Quán Cà Phê. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
