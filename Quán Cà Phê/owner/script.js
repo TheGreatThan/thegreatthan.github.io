@@ -10,6 +10,8 @@ const dismissNotification = document.getElementById('dismiss-notification');
 const orderDetailsModal = document.getElementById('order-details-modal');
 const closeModal = document.querySelector('.close');
 const notificationSound = document.getElementById('notification-sound');
+const editButtons = document.querySelectorAll('.btn-edit');
+const toggleButtons = document.querySelectorAll('.btn-toggle');
 
 // Modal detail elements
 const detailOrderNumber = document.getElementById('detail-order-number');
@@ -24,6 +26,7 @@ const detailActions = document.getElementById('detail-actions');
 // Order data
 let pendingOrders = [];
 let completedOrders = [];
+let menuItems = [];
 
 // State
 let currentViewingOrder = null;
@@ -32,6 +35,9 @@ let currentViewingOrder = null;
 document.addEventListener('DOMContentLoaded', () => {
     // Load orders from localStorage
     loadOrders();
+    
+    // Load menu items
+    loadMenuItems();
     
     // Check for new orders
     checkForNewOrders();
@@ -45,6 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Set up listeners for window messages
     setupMessageListener();
+    
+    // Setup menu management
+    setupMenuManagement();
     
     // Refresh orders every 10 seconds
     setInterval(checkForNewOrders, 10000);
@@ -120,6 +129,30 @@ function loadOrders() {
         pendingOrders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         completedOrders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     }
+}
+
+function loadMenuItems() {
+    // Load from localStorage or initialize with default menu items
+    const savedMenu = localStorage.getItem('coffee_shop_menu');
+    if (savedMenu) {
+        menuItems = JSON.parse(savedMenu);
+    } else {
+        // Initialize with default menu
+        menuItems = [
+            { id: 1, name: 'Espresso', price: 3.50, category: 'coffee', available: true },
+            { id: 2, name: 'Cappuccino', price: 4.50, category: 'coffee', available: true },
+            { id: 3, name: 'Latte', price: 4.75, category: 'coffee', available: true },
+            { id: 4, name: 'Green Tea', price: 3.25, category: 'tea', available: true },
+            { id: 5, name: 'Black Tea', price: 3.25, category: 'tea', available: true },
+            { id: 6, name: 'Croissant', price: 2.75, category: 'pastry', available: true },
+            { id: 7, name: 'Chocolate Muffin', price: 3.00, category: 'pastry', available: true }
+        ];
+        saveMenuItems();
+    }
+}
+
+function saveMenuItems() {
+    localStorage.setItem('coffee_shop_menu', JSON.stringify(menuItems));
 }
 
 function saveOrders() {
@@ -406,3 +439,182 @@ function playNotificationSound() {
         }
     }
 }
+
+// Menu Management Functions
+function setupMenuManagement() {
+    // Get all menu tables
+    const menuTables = document.querySelectorAll('.menu-table tbody');
+    
+    // Update menu tables with current data
+    updateMenuTables(menuTables);
+    
+    // Setup edit and toggle buttons
+    setupMenuButtons();
+}
+
+function updateMenuTables(menuTables) {
+    // Get all category sections
+    const coffeeTable = document.querySelector('.menu-section:nth-child(1) .menu-table tbody');
+    const teaTable = document.querySelector('.menu-section:nth-child(2) .menu-table tbody');
+    const pastryTable = document.querySelector('.menu-section:nth-child(3) .menu-table tbody');
+    
+    // Clear all tables
+    coffeeTable.innerHTML = '';
+    teaTable.innerHTML = '';
+    pastryTable.innerHTML = '';
+    
+    // Filter menu items by category
+    const coffeeItems = menuItems.filter(item => item.category === 'coffee');
+    const teaItems = menuItems.filter(item => item.category === 'tea');
+    const pastryItems = menuItems.filter(item => item.category === 'pastry');
+    
+    // Add items to tables
+    coffeeItems.forEach(item => {
+        coffeeTable.appendChild(createMenuRow(item));
+    });
+    
+    teaItems.forEach(item => {
+        teaTable.appendChild(createMenuRow(item));
+    });
+    
+    pastryItems.forEach(item => {
+        pastryTable.appendChild(createMenuRow(item));
+    });
+    
+    // Setup buttons again after updating tables
+    setupMenuButtons();
+}
+
+function createMenuRow(item) {
+    const row = document.createElement('tr');
+    row.setAttribute('data-item-id', item.id);
+    
+    row.innerHTML = `
+        <td>${item.name}</td>
+        <td>$${item.price.toFixed(2)}</td>
+        <td>${item.available ? 'Available' : 'Unavailable'}</td>
+        <td>
+            <button class="btn-edit" data-item-id="${item.id}">Edit</button>
+            <button class="btn-toggle" data-item-id="${item.id}">${item.available ? 'Set Unavailable' : 'Set Available'}</button>
+        </td>
+    `;
+    
+    return row;
+}
+
+function setupMenuButtons() {
+    // Get all edit and toggle buttons
+    const editButtons = document.querySelectorAll('.btn-edit');
+    const toggleButtons = document.querySelectorAll('.btn-toggle');
+    
+    // Add event listeners to edit buttons
+    editButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const itemId = button.getAttribute('data-item-id');
+            editMenuItem(itemId);
+        });
+    });
+    
+    // Add event listeners to toggle buttons
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const itemId = button.getAttribute('data-item-id');
+            toggleMenuItemAvailability(itemId);
+        });
+    });
+}
+
+function editMenuItem(itemId) {
+    // Find the item
+    const item = menuItems.find(item => item.id == itemId);
+    
+    if (!item) return;
+    
+    // Prompt for new values
+    const newName = prompt('Enter new name:', item.name);
+    if (newName === null) return; // User cancelled
+    
+    const newPrice = prompt('Enter new price:', item.price.toFixed(2));
+    if (newPrice === null) return; // User cancelled
+    
+    // Update item
+    item.name = newName;
+    item.price = parseFloat(newPrice);
+    
+    // Save changes
+    saveMenuItems();
+    
+    // Update tables
+    updateMenuTables();
+    
+    // Show confirmation
+    alert(`Menu item "${item.name}" has been updated.`);
+}
+
+function toggleMenuItemAvailability(itemId) {
+    // Find the item
+    const item = menuItems.find(item => item.id == itemId);
+    
+    if (!item) return;
+    
+    // Toggle availability
+    item.available = !item.available;
+    
+    // Save changes
+    saveMenuItems();
+    
+    // Update tables
+    updateMenuTables();
+    
+    // Show confirmation
+    alert(`Menu item "${item.name}" is now ${item.available ? 'available' : 'unavailable'}.`);
+}
+
+// Add New Menu Item Function
+function addMenuItem() {
+    // Prompt for values
+    const name = prompt('Enter item name:');
+    if (name === null || name.trim() === '') return; // User cancelled or empty name
+    
+    const price = prompt('Enter price:');
+    if (price === null) return; // User cancelled
+    
+    const categoryOptions = ['coffee', 'tea', 'pastry'];
+    let category = prompt(`Enter category (${categoryOptions.join(', ')}):`);
+    
+    // Validate category
+    while (!categoryOptions.includes(category)) {
+        if (category === null) return; // User cancelled
+        category = prompt(`Invalid category. Please enter one of: ${categoryOptions.join(', ')}`);
+    }
+    
+    // Create new item
+    const newId = Math.max(...menuItems.map(item => item.id), 0) + 1;
+    const newItem = {
+        id: newId,
+        name: name,
+        price: parseFloat(price),
+        category: category,
+        available: true
+    };
+    
+    // Add to menu
+    menuItems.push(newItem);
+    
+    // Save changes
+    saveMenuItems();
+    
+    // Update tables
+    updateMenuTables();
+    
+    // Show confirmation
+    alert(`New menu item "${name}" has been added.`);
+}
+
+// Add event listener for the "Add New Item" button
+document.addEventListener('DOMContentLoaded', () => {
+    const addItemButton = document.getElementById('add-item-button');
+    if (addItemButton) {
+        addItemButton.addEventListener('click', addMenuItem);
+    }
+});

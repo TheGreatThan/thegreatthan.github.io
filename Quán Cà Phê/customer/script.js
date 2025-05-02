@@ -14,9 +14,16 @@ const orderNumber = document.getElementById('order-number');
 // Cart data
 let cart = [];
 let orderCounter = 1000; // Starting order number
+let menuItems = [];
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Load menu items from localStorage
+    loadMenuItems();
+    
+    // Update menu UI based on availability
+    updateMenuUI();
+    
     // Load cart from localStorage if available
     const savedCart = localStorage.getItem('coffee_shop_cart');
     if (savedCart) {
@@ -40,7 +47,13 @@ addToCartButtons.forEach(button => {
         const name = menuItem.dataset.name;
         const price = parseFloat(menuItem.dataset.price);
         
-        addToCart(id, name, price);
+        // Check if item is available before adding to cart
+        const item = menuItems.find(item => item.id == id);
+        if (item && item.available) {
+            addToCart(id, name, price);
+        } else {
+            alert('Sorry, this item is currently unavailable.');
+        }
     });
 });
 
@@ -55,6 +68,49 @@ window.addEventListener('click', (e) => {
 });
 
 // Functions
+function loadMenuItems() {
+    // Load from localStorage or use defaults
+    const savedMenu = localStorage.getItem('coffee_shop_menu');
+    if (savedMenu) {
+        menuItems = JSON.parse(savedMenu);
+    } else {
+        // Default menu items with all available
+        menuItems = [
+            { id: 1, name: 'Espresso', price: 3.50, category: 'coffee', available: true },
+            { id: 2, name: 'Cappuccino', price: 4.50, category: 'coffee', available: true },
+            { id: 3, name: 'Latte', price: 4.75, category: 'coffee', available: true },
+            { id: 4, name: 'Green Tea', price: 3.25, category: 'tea', available: true },
+            { id: 5, name: 'Black Tea', price: 3.25, category: 'tea', available: true },
+            { id: 6, name: 'Croissant', price: 2.75, category: 'pastry', available: true },
+            { id: 7, name: 'Chocolate Muffin', price: 3.00, category: 'pastry', available: true }
+        ];
+    }
+}
+
+function updateMenuUI() {
+    // Update each menu item based on availability
+    const menuItemElements = document.querySelectorAll('.menu-item');
+    
+    menuItemElements.forEach(element => {
+        const id = element.dataset.id;
+        const menuItem = menuItems.find(item => item.id == id);
+        
+        if (menuItem && !menuItem.available) {
+            // Item is unavailable, grey it out and disable the button
+            element.classList.add('unavailable');
+            const button = element.querySelector('.add-to-cart');
+            button.disabled = true;
+            button.textContent = 'Unavailable';
+        } else {
+            // Item is available, ensure it's enabled
+            element.classList.remove('unavailable');
+            const button = element.querySelector('.add-to-cart');
+            button.disabled = false;
+            button.textContent = 'Add to Cart';
+        }
+    });
+}
+
 function openCart(e) {
     e.preventDefault();
     cartModal.style.display = 'block';
@@ -107,6 +163,19 @@ function renderCart() {
         cartItems.innerHTML = '<p class="empty-cart">Your cart is empty</p>';
         cartTotal.textContent = '0.00';
         return;
+    }
+    
+    // Filter out any unavailable items
+    const availableItems = cart.filter(cartItem => {
+        const menuItem = menuItems.find(item => item.id == cartItem.id);
+        return menuItem && menuItem.available;
+    });
+    
+    // If items were removed due to availability, update cart
+    if (availableItems.length !== cart.length) {
+        cart = availableItems;
+        saveCart();
+        alert('Some items in your cart are no longer available and have been removed.');
     }
     
     // Add each item to the cart display
@@ -224,6 +293,12 @@ function showAddedToCartFeedback(itemName) {
 
 function handleOrderSubmit(e) {
     e.preventDefault();
+    
+    // Check if cart is empty
+    if (cart.length === 0) {
+        alert('Your cart is empty. Please add items before placing an order.');
+        return;
+    }
     
     // Get form data
     const customerName = document.getElementById('customer-name').value;

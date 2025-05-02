@@ -311,6 +311,18 @@ main {
     background-color: #ec971f;
 }
 
+/* Add Item Button */
+.btn-add {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+.btn-add:hover {
+    background-color: #45a049;
+}
+
 /* Modal */
 .modal {
     display: none;
