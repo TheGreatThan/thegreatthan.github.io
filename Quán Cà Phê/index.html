@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quán Cà Phê - Coffee Shop Ordering System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #5d4037;
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #795548;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #5d4037;
+        }
+        .info-box {
+            background-color: #fbe9e7;
+            border-left: 5px solid #ff8a65;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .firebase-box {
+            background-color: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quán Cà Phê - Coffee Shop Ordering System</h1>
+    
+    <div class="firebase-box">
+        <p><strong>Now with Cloud Storage!</strong> The ordering system now uses Firebase to store data in the cloud, allowing seamless synchronization across all devices.</p>
+        <p>Before using the system, please set up your Firebase project by following the instructions in the <a href="FIREBASE_SETUP.md">FIREBASE_SETUP.md</a> file.</p>
+    </div>
+    
+    <p>Welcome to the Quán Cà Phê Coffee Shop Ordering System. This system consists of two parts:</p>
+    
+    <div class="button-container">
+        <a href="customer/index.html" class="button">Customer Ordering System</a>
+        <a href="owner/index.html" class="button">Owner Dashboard</a>
+    </div>
+    
+    <h2>How to Use</h2>
+    
+    <h3>For Customers:</h3>
+    <ul>
+        <li>Browse the menu and add items to your cart</li>
+        <li>View your cart and adjust quantities</li>
+        <li>Fill out your information and place your order</li>
+        <li>Receive an order confirmation with your order number</li>
+    </ul>
+    
+    <h3>For Shop Owners:</h3>
+    <ul>
+        <li>View pending orders in real-time</li>
+        <li>Get notified when new orders come in</li>
+        <li>Mark orders as completed or cancelled</li>
+        <li>View order history</li>
+        <li>Manage menu items (add, edit, or toggle availability)</li>
+    </ul>
+    
+    <div class="info-box">
+        <p><strong>Note:</strong> For the system to work properly, you need to add image files to the <code>images</code> directory. You can also add a notification sound file to the <code>sounds</code> directory.</p>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Quán Cà Phê. All rights reserved.</p>
+    </footer>
+</body>
+</html> 
