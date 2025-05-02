@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quán Cà Phê - Owner Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Quán Cà Phê - Owner Dashboard</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#pending" class="active" data-tab="pending-orders">Pending Orders</a></li>
+                <li><a href="#completed" data-tab="completed-orders">Completed Orders</a></li>
+                <li><a href="#menu" data-tab="menu-management">Menu Management</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="pending-orders" class="tab-content active">
+            <div class="section-header">
+                <h2>Pending Orders</h2>
+                <p id="pending-count" class="count-badge">0</p>
+            </div>
+            
+            <div class="order-notification" id="new-order-notification">
+                <p>New order received!</p>
+                <button id="dismiss-notification">Dismiss</button>
+            </div>
+            
+            <div class="orders-container" id="pending-orders-container">
+                <!-- Pending orders will be added here dynamically -->
+                <div class="empty-state" id="empty-pending">
+                    <p>No pending orders at the moment</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="completed-orders" class="tab-content">
+            <div class="section-header">
+                <h2>Completed Orders</h2>
+                <p id="completed-count" class="count-badge">0</p>
+            </div>
+            
+            <div class="orders-container" id="completed-orders-container">
+                <!-- Completed orders will be added here dynamically -->
+                <div class="empty-state" id="empty-completed">
+                    <p>No completed orders yet</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="menu-management" class="tab-content">
+            <h2>Menu Management</h2>
+            <p class="note">This feature will be available in future updates.</p>
+            
+            <div class="menu-editor">
+                <div class="menu-section">
+                    <h3>Coffee</h3>
+                    <table class="menu-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Espresso</td>
+                                <td>$3.50</td>
+                                <td>Available</td>
+                                <td>
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-toggle">Set Unavailable</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Cappuccino</td>
+                                <td>$4.50</td>
+                                <td>Available</td>
+                                <td>
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-toggle">Set Unavailable</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Latte</td>
+                                <td>$4.75</td>
+                                <td>Available</td>
+                                <td>
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-toggle">Set Unavailable</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="menu-section">
+                    <h3>Tea</h3>
+                    <table class="menu-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Green Tea</td>
+                                <td>$3.25</td>
+                                <td>Available</td>
+                                <td>
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-toggle">Set Unavailable</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Black Tea</td>
+                                <td>$3.25</td>
+                                <td>Available</td>
+                                <td>
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-toggle">Set Unavailable</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="menu-section">
+                    <h3>Pastries</h3>
+                    <table class="menu-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Croissant</td>
+                                <td>$2.75</td>
+                                <td>Available</td>
+                                <td>
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-toggle">Set Unavailable</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Chocolate Muffin</td>
+                                <td>$3.00</td>
+                                <td>Available</td>
+                                <td>
+                                    <button class="btn-edit">Edit</button>
+                                    <button class="btn-toggle">Set Unavailable</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="order-details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Order Details</h2>
+            <div class="order-info">
+                <p><strong>Order Number:</strong> <span id="detail-order-number"></span></p>
+                <p><strong>Customer:</strong> <span id="detail-customer"></span></p>
+                <p><strong>Table Number:</strong> <span id="detail-table"></span></p>
+                <p><strong>Time:</strong> <span id="detail-time"></span></p>
+            </div>
+            <div class="order-items" id="detail-items">
+                <!-- Order items will be added here dynamically -->
+            </div>
+            <p class="order-total"><strong>Total:</strong> $<span id="detail-total"></span></p>
+            <div class="order-instructions">
+                <p><strong>Special Instructions:</strong></p>
+                <p id="detail-instructions"></p>
+            </div>
+            <div class="order-actions" id="detail-actions">
+                <!-- Order actions will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Quán Cà Phê. All rights reserved.</p>
+    </footer>
+
+    <audio id="notification-sound" src="../sounds/notification.mp3"></audio>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
