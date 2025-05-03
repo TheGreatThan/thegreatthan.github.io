@@ -422,7 +422,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Calculate final total based on promotion
         if (currentOrder.promotionApplied) {
-            currentOrder.discount = currentOrder.total * 0.5; // 50% discount
+            // Discount already calculated in applyPromotionCode function
+            // We just need to ensure finalTotal is correct
             currentOrder.finalTotal = currentOrder.total - currentOrder.discount;
         } else {
             currentOrder.discount = 0;
@@ -473,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span>${formatCurrency(currentOrder.total)}</span>
                     </div>
                     <div class="order-discount">
-                        <span>Giảm giá (50%):</span>
+                        <span>Giảm giá ${currentOrder.promotionCode === 'nguoiquen' ? '(20%)' : ''}:</span>
                         <span>-${formatCurrency(currentOrder.discount)}</span>
                     </div>
                     <div class="order-final">
@@ -1134,10 +1135,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (code.toLowerCase() === 'nguoiquen') {
             currentOrder.promotionApplied = true;
             currentOrder.promotionCode = code;
-            currentOrder.discount = currentOrder.total * 0.5; // 50% discount
+            currentOrder.discount = currentOrder.total * 0.2; // 20% discount
             currentOrder.finalTotal = currentOrder.total - currentOrder.discount;
             
-            promotionStatusElement.textContent = 'Mã khuyến mãi được áp dụng: Giảm 50%';
+            promotionStatusElement.textContent = 'Mã khuyến mãi được áp dụng: Giảm 20%';
             promotionStatusElement.className = 'promotion-status promotion-active';
             
             // Update the UI to reflect the discount
