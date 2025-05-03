@@ -1135,7 +1135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (code.toLowerCase() === 'nguoiquen') {
             currentOrder.promotionApplied = true;
             currentOrder.promotionCode = code;
-            currentOrder.discount = currentOrder.total * 0.2; // 20% discount
+            currentOrder.discount = currentOrder.total * 0.5; // 50% discount
             currentOrder.finalTotal = currentOrder.total - currentOrder.discount;
             
             promotionStatusElement.textContent = 'Mã khuyến mãi được áp dụng: Giảm 20%';
