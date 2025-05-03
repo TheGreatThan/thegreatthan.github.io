@@ -1130,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Check if the promotion code is "NguoiQuen" for 50% discount
+        // Check which promotion code was entered
         if (code.toLowerCase() === 'nguoiquen') {
             currentOrder.promotionApplied = true;
             currentOrder.promotionCode = code;
@@ -1138,6 +1138,28 @@ document.addEventListener('DOMContentLoaded', function() {
             currentOrder.finalTotal = currentOrder.total - currentOrder.discount;
             
             promotionStatusElement.textContent = 'Mã khuyến mãi được áp dụng: Giảm 50%';
+            promotionStatusElement.className = 'promotion-status promotion-active';
+            
+            // Update the UI to reflect the discount
+            updateCurrentOrderUI();
+        } else if (code.toLowerCase() === '5k') {
+            currentOrder.promotionApplied = true;
+            currentOrder.promotionCode = code;
+            currentOrder.discount = 5000; // 5,000đ discount
+            currentOrder.finalTotal = currentOrder.total - currentOrder.discount;
+            
+            promotionStatusElement.textContent = 'Mã khuyến mãi được áp dụng: Giảm 5,000đ';
+            promotionStatusElement.className = 'promotion-status promotion-active';
+            
+            // Update the UI to reflect the discount
+            updateCurrentOrderUI();
+        } else if (code.toLowerCase() === '10k') {
+            currentOrder.promotionApplied = true;
+            currentOrder.promotionCode = code;
+            currentOrder.discount = 10000; // 10,000đ discount
+            currentOrder.finalTotal = currentOrder.total - currentOrder.discount;
+            
+            promotionStatusElement.textContent = 'Mã khuyến mãi được áp dụng: Giảm 10,000đ';
             promotionStatusElement.className = 'promotion-status promotion-active';
             
             // Update the UI to reflect the discount
