@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cờ Caro Online</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Cờ Caro Online</h1>
+    <div id="game-info">
+        <p>Phòng chơi: <span id="room-id"></span></p>
+        <p>Lượt của: <span id="current-player">X</span></p>
+        <p id="status"></p>
+    </div>
+    <div id="board" class="board"></div>
+    <div id="controls">
+        <input type="text" id="room-input" placeholder="Nhập ID phòng...">
+        <button id="join-room-btn">Vào Phòng</button>
+        <button id="create-room-btn">Tạo Phòng Mới</button>
+        <button id="reset-btn" style="display:none;">Chơi Lại</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
