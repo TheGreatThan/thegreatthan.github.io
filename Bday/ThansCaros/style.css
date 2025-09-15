@@ -1,0 +1,81 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+h1 {
+    color: #333;
+}
+
+#game-info {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(15, 30px); /* Bàn cờ 15x15 */
+    grid-template-rows: repeat(15, 30px);
+    gap: 2px;
+    background-color: #ccc;
+    border: 3px solid #333;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cell:hover {
+    background-color: #e0e0e0;
+}
+
+.cell.x {
+    color: #007BFF; /* Màu cho X */
+}
+
+.cell.o {
+    color: #DC3545; /* Màu cho O */
+}
+
+#controls {
+    margin-top: 20px;
+}
+
+button, input {
+    padding: 10px 15px;
+    font-size: 16px;
+    margin: 0 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#status {
+    font-weight: bold;
+    color: green;
+    min-height: 24px;
+}
