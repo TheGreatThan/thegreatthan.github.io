@@ -26,11 +26,6 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        .correct-glow {
-            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
-            border-color: #22c55e !important;
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen pb-12 font-sans">
@@ -111,7 +106,6 @@
         <!-- QUIZ MODE SECTION -->
         <div id="quiz-section" class="mt-4 flex flex-col items-center fade-in hidden">
             <div class="w-full max-w-xl flex flex-col gap-6">
-                <!-- Quiz Config -->
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-wrap justify-between items-center gap-4">
                     <div class="flex flex-col">
                         <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Hướng kiểm tra</span>
@@ -133,22 +127,17 @@
                     </div>
                 </div>
 
-                <!-- Quiz Card -->
                 <div id="quiz-card" class="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 p-8 md:p-12 min-h-[400px] flex flex-col justify-center relative overflow-hidden">
                     <div id="quiz-question-area" class="text-center">
                         <span id="quiz-direction-label" class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500 opacity-60 block mb-6">DỊCH SANG TIẾNG PHÁP</span>
                         <h2 id="quiz-question-text" class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight mb-10"></h2>
-                        
                         <div id="quiz-options" class="grid grid-cols-1 gap-3 w-full max-w-md mx-auto"></div>
-
                         <div id="quiz-writing" class="hidden w-full max-w-md mx-auto">
                             <input type="text" id="quiz-input" autocomplete="off" placeholder="Nhập câu trả lời..." class="w-full p-4 rounded-2xl border-2 border-slate-100 focus:border-blue-500 outline-none text-center text-xl font-medium transition-all">
                             <p class="text-[10px] text-slate-400 mt-2 italic">* Chấp nhận nhiều nghĩa tương đương</p>
                             <button id="quiz-submit" class="mt-4 w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 active:scale-95 transition-all">KIỂM TRA</button>
                         </div>
                     </div>
-
-                    <!-- Feedback Overlay -->
                     <div id="quiz-feedback" class="absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 hidden z-20">
                         <div id="feedback-icon" class="mb-4"></div>
                         <h3 id="feedback-title" class="text-2xl font-bold mb-2"></h3>
@@ -179,18 +168,18 @@
 
     <script>
         const rawVocabularyBase = [
-            // DỮ LIỆU GỐC TỪ PDF
+            // --- TRANG 1 ---
             { fr: "Observer", vi: "Quan sát", cat: "actions" },
             { fr: "Qu'est-ce que c'est", vi: "Đây là cái gì?", cat: "actions" },
             { fr: "Échange", vi: "Trao đổi", cat: "actions" },
             { fr: "Quelqu'un", vi: "Ai đó", cat: "actions" },
-            { fr: "Associer", vi: "Liên kết / Nối / Tu nói", cat: "actions" },
+            { fr: "Associer", vi: "Liên kết / Nối", cat: "actions" },
             { fr: "La pluie", vi: "Mưa", cat: "nature" },
             { fr: "Il pleut", vi: "Trời mưa", cat: "nature" },
             { fr: "Le quartier", vi: "Khu phố / Phường", cat: "home" },
             { fr: "Au fait", vi: "Nhân tiện", cat: "actions" },
             { fr: "La place", vi: "Chỗ ngồi / Quảng trường", cat: "home" },
-            { fr: "Auteur / Auteure", vi: "Tác giả", cat: "actions" },
+            { fr: "Un auteur / Une auteure", vi: "Tác giả", cat: "actions" },
             { fr: "Inviter", vi: "Mời", cat: "actions" },
             { fr: "Des fresques", vi: "Bức họa", cat: "nature" },
             { fr: "Sur", vi: "Trên", cat: "home" },
@@ -199,78 +188,152 @@
             { fr: "Personnalités", vi: "Người nổi tiếng", cat: "actions" },
             { fr: "Le violon", vi: "Vĩ cầm", cat: "music" },
             { fr: "Le tambour", vi: "Cái trống", cat: "music" },
-            { fr: "Le violoncelle", vi: "Đàn Cello", cat: "music" },
+            { fr: "Le violoncelle", vi: "Cello", cat: "music" },
             { fr: "La batterie", vi: "Bộ trống", cat: "music" },
             { fr: "La harpe", vi: "Đàn hạc", cat: "music" },
             { fr: "Le piano", vi: "Đàn Piano", cat: "music" },
             { fr: "La guitare", vi: "Đàn Ghi-ta", cat: "music" },
             { fr: "L'accordéon", vi: "Đàn Accordéon", cat: "music" },
             { fr: "La flûte", vi: "Sáo", cat: "music" },
-            { fr: "Le Saxophone", vi: "Kèn Saxophone", cat: "music" },
+            { fr: "Le Saxophone", vi: "Saxophone", cat: "music" },
             { fr: "La trompette", vi: "Kèn Trumpet", cat: "music" },
-            { fr: "L'harmonica", vi: "Kèn Harmonica", cat: "music" },
-            { fr: "Jouer à + Sport", vi: "Chơi môn thể thao", cat: "sport" },
-            { fr: "Faire de + Sport", vi: "Tập môn thể thao", cat: "sport" },
-            { fr: "Aux bài / Aux cartes", vi: "Chơi bài", cat: "sport" },
+            { fr: "L'harmonica", vi: "Harmonica", cat: "music" },
+
+            // --- TRANG 2 ---
+            { fr: "Jouer à + Sport / Jeux", vi: "Chơi môn thể thao / Trò chơi", cat: "sport" },
+            { fr: "Aux cartes", vi: "Chơi bài", cat: "sport" },
+            { fr: "Une carte d'étudiant", vi: "Thẻ sinh viên", cat: "market" },
+            { fr: "Une carte d'identité", vi: "Thẻ căn cước", cat: "market" },
+            { fr: "Une carte de bibliothèque", vi: "Thẻ thư viện", cat: "market" },
             { fr: "Le ping-pong", vi: "Bóng bàn", cat: "sport" },
             { fr: "Le tennis", vi: "Quần vợt", cat: "sport" },
+            { fr: "Le golf", vi: "Đánh Golf", cat: "sport" },
             { fr: "Le foot", vi: "Bóng đá", cat: "sport" },
+            { fr: "Le hockey sur glace", vi: "Khúc côn cầu trên băng", cat: "sport" },
+            { fr: "Le basket", vi: "Bóng rổ", cat: "sport" },
+            { fr: "Le hand-ball", vi: "Bóng ném", cat: "sport" },
+            { fr: "Le base-ball", vi: "Bóng chày", cat: "sport" },
+            { fr: "Faire de + Sport", vi: "Tập môn thể thao vận động", cat: "sport" },
             { fr: "L'équitation", vi: "Cưỡi ngựa", cat: "sport" },
             { fr: "Le ski", vi: "Trượt tuyết", cat: "sport" },
             { fr: "L'escalade", vi: "Leo núi", cat: "sport" },
-            { fr: "Le jogging", vi: "Chạy bộ", cat: "sport" },
+            { fr: "Le jogging / Footing", vi: "Chạy bộ", cat: "sport" },
             { fr: "La natation", vi: "Bơi lội", cat: "sport" },
             { fr: "L'escrime", vi: "Đấu kiếm", cat: "sport" },
             { fr: "Le patinage", vi: "Trượt băng", cat: "sport" },
-            { fr: "Le vélo", vi: "Đạp xe", cat: "sport" },
+            { fr: "Le vélo / Cyclisme", vi: "Đạp xe", cat: "sport" },
+            { fr: "Le snowboard", vi: "Trượt tuyết ván", cat: "sport" },
             { fr: "Les jeux vidéo", vi: "Chơi điện tử", cat: "sport" },
+
+            // --- TRANG 3-6 ---
             { fr: "S'effondrer / S'écrouler", vi: "Sụp đổ / Sập", cat: "actions" },
-            { fr: "Gêner", vi: "Làm quá / Làm phiền", cat: "actions" },
+            { fr: "Gêner", vi: "Làm phiền / Gây khó chịu", cat: "actions" },
             { fr: "Toxique", vi: "Độc hại", cat: "actions" },
+            { fr: "L'examen / L'exercice", vi: "Kỳ thi / Bài tập", cat: "actions" },
             { fr: "Déménager", vi: "Chuyển nhà", cat: "home" },
             { fr: "Lumineux / Sombre", vi: "Sáng / Tối", cat: "home" },
             { fr: "Moderne / Ancien", vi: "Hiện đại / Cổ kính", cat: "home" },
             { fr: "Calme / Bruyant", vi: "Yên tĩnh / Ồn ào", cat: "home" },
+            { fr: "Ménage", vi: "Việc nhà", cat: "home" },
+            { fr: "Tout équipé", vi: "Trang bị đầy đủ", cat: "home" },
             { fr: "Rappeler / Répéter", vi: "Nhắc lại / Lặp lại", cat: "actions" },
             { fr: "Se Souvenir", vi: "Nhớ lại", cat: "actions" },
             { fr: "C'est dommage", vi: "Thật đáng tiếc", cat: "actions" },
-            { fr: "J'aimerais", vi: "Tôi muốn", cat: "actions" },
-            { fr: "Cassé / Réparer", vi: "Hỏng / Sửa", cat: "actions" },
-            { fr: "Disponible", vi: "Có sẵn", cat: "actions" },
+            { fr: "J'aimerais", vi: "Tôi muốn (lịch sự)", cat: "actions" },
+            { fr: "Cassé / Réparer", vi: "Bị hỏng / Sửa chữa", cat: "actions" },
+            { fr: "Disponible / Dispo", vi: "Có sẵn / Rảnh", cat: "actions" },
             { fr: "Actuellement", vi: "Hiện nay", cat: "grammar" },
-            { fr: "Parcourir", vi: "Đi khắp nơi", cat: "actions" },
-            { fr: "Durant / Pendant", vi: "Trong khoảng thời gian", cat: "grammar" },
-            { fr: "L'arrivée / Le départ", vi: "Sự đến / Sự đi", cat: "nature" },
-            { fr: "Se dérouler / Se passer / Avoir lieu", vi: "Diễn ra / Xảy ra", cat: "actions" },
+            { fr: "Parcourir", vi: "Đi khắp nơi / Đi xuyên qua", cat: "actions" },
+            { fr: "Durant / Pendant", vi: "Trong khoảng thời gian / Trong khi", cat: "grammar" },
+            { fr: "Régulièrement", vi: "Thường xuyên", cat: "grammar" },
+            { fr: "L'arrivée / Le départ", vi: "Sự đến / Sự khởi hành", cat: "nature" },
+            { fr: "Publicité / Pub", vi: "Quảng cáo", cat: "market" },
+            { fr: "Événement", vi: "Sự kiện", cat: "actions" },
+            { fr: "Se dérouler / Se passer / Avoir lieu", vi: "Diễn ra / Xảy ra / Có sự kiện", cat: "actions" },
             { fr: "S'ennuyer", vi: "Buồn chán", cat: "actions" },
             { fr: "Manquer", vi: "Thiếu / Nhớ", cat: "actions" },
             { fr: "Livrer / Camion", vi: "Giao hàng / Xe tải", cat: "market" },
+            { fr: "Transparent", vi: "Trong suốt", cat: "home" },
             { fr: "Le toit / Le sol", vi: "Mái nhà / Mặt đất", cat: "home" },
-            { fr: "Cher / Chère", vi: "Đắt / Thân mến", cat: "shopping" },
-            { fr: "Chercher / Tìm kiếm", vi: "Tìm kiếm", cat: "actions" },
-            { fr: "Trouver", vi: "Tìm thấy", cat: "actions" },
-            { fr: "Gagner son pain / sa vie", vi: "Kiếm sống", cat: "market" },
+            { fr: "Solide", vi: "Chắc chắn", cat: "home" },
+            { fr: "Se déplacer", vi: "Di chuyển", cat: "actions" },
+            { fr: "Fabriquer", vi: "Chế tạo", cat: "actions" },
+
+            // --- TRANG 7-12 ---
+            { fr: "Mieux", vi: "Tốt hơn", cat: "grammar" },
+            { fr: "Profiter", vi: "Tận hưởng", cat: "actions" },
+            { fr: "Réserver", vi: "Đặt trước", cat: "market" },
+            { fr: "Obtenir", vi: "Đạt được", cat: "actions" },
+            { fr: "Réductions", vi: "Giảm giá", cat: "market" },
+            { fr: "Rencontrer", vi: "Gặp gỡ", cat: "actions" },
+            { fr: "Rendre", vi: "Trả lại", cat: "actions" },
+            { fr: "Acheter / Vendre", vi: "Mua / Bán", cat: "market" },
+            { fr: "Cher / Chère", vi: "Mắc / Thân mến", cat: "shopping" },
+            { fr: "Chercher / Trouver", vi: "Tìm kiếm / Tìm thấy", cat: "actions" },
+            { fr: "Gagner son pain / Gagner sa vie", vi: "Kiếm sống", cat: "market" },
+            { fr: "Frais / Fraîche", vi: "Tươi (đồ ăn)", cat: "market" },
+            { fr: "Aliment", vi: "Thực phẩm", cat: "market" },
+            { fr: "Paiement / Payer", vi: "Thanh toán / Trả tiền", cat: "market" },
+            { fr: "Virement / Carte / Espèce", vi: "Chuyển khoản / Thẻ / Tiền mặt", cat: "market" },
+            { fr: "L'addition / Pourboire", vi: "Hóa đơn / Tiền bo", cat: "market" },
             { fr: "La France / Français", vi: "Pháp / Người Pháp", cat: "countries" },
             { fr: "L'Italie / Italien", vi: "Ý / Người Ý", cat: "countries" },
             { fr: "Le Vietnam / Vietnamien", vi: "Việt Nam / Người Việt", cat: "countries" },
+            { fr: "La Chine / Chinois", vi: "Trung Quốc / Người Trung", cat: "countries" },
+            { fr: "L'Angleterre / Anglais", vi: "Anh / Người Anh", cat: "countries" },
+            { fr: "L'Allemagne / Allemand", vi: "Đức / Người Đức", cat: "countries" },
+
+            // --- TRANG 13-21 ---
             { fr: "Hébergement", vi: "Chỗ ở", cat: "nature" },
             { fr: "La campagne / Camping", vi: "Vùng quê / Cắm trại", cat: "nature" },
-            { fr: "L'île / La mer / La montagne", vi: "Hòn đảo / Biển / Núi", cat: "nature" },
-            { fr: "La forêt / Le lac", vi: "Rừng / Hồ", cat: "nature" },
+            { fr: "Se baigner / Bronzer", vi: "Tắm biển / Tắm nắng", cat: "nature" },
+            { fr: "L'île / La mer / La montagne", vi: "Đảo / Biển / Núi", cat: "nature" },
+            { fr: "La forêt / Le lac / La rivière", vi: "Rừng / Hồ / Sông", cat: "nature" },
             { fr: "Le canard / Le chat / Le chien / Le cheval", vi: "Vịt / Mèo / Chó / Ngựa", cat: "animals" },
-            { fr: "Carré / Rond / Rectangulaire / Triangulaire", vi: "Vuông / Tròn / Chữ nhật / Tam giác", cat: "home" },
+            { fr: "Le lapin / L'oiseau / Le poisson", vi: "Thỏ / Chim / Cá", cat: "animals" },
+            { fr: "La vaisselle", vi: "Rửa chén / Chén dĩa", cat: "home" },
+            { fr: "Une bonne affaire", vi: "Giá hời", cat: "shopping" },
+            { fr: "La mode", vi: "Thời trang", cat: "shopping" },
+            { fr: "Vêtements / Robe / Jupe", vi: "Quần áo / Đầm / Váy", cat: "shopping" },
+            { fr: "Un jean / Chemisier / Tee-shirt", vi: "Quần jean / Sơ mi nữ / Áo thun", cat: "shopping" },
+            { fr: "En coton / En soie / En cuir", vi: "Bằng bông / Bằng lụa / Bằng da", cat: "shopping" },
+            { fr: "D'occasion", vi: "Đồ cũ", cat: "shopping" },
+            { fr: "Porter / Apporter / Emporter", vi: "Mặc / Mang đến / Mang đi", cat: "actions" },
+            { fr: "Au printemps / En été / En automne / En hiver", vi: "Xuân / Hạ / Thu / Đông", cat: "grammar" },
+            { fr: "Bientôt / Déjà", vi: "Sắp tới / Đã rồi", cat: "grammar" },
             { fr: "Lourd / Léger", vi: "Nặng / Nhẹ", cat: "grammar" },
-            { fr: "Bientôt / Déjà", vi: "Sắp / Đã", cat: "grammar" }
+            { fr: "Carré / Rond / Rectangulaire / Triangulaire", vi: "Vuông / Tròn / Chữ nhật / Tam giác", cat: "home" },
+            { fr: "Conduire / Créer / Organiser", vi: "Lái xe / Tạo ra / Tổ chức", cat: "actions" },
+            { fr: "Utile / Inutile", vi: "Hữu ích / Vô dụng", cat: "actions" },
+            { fr: "Dépenser", vi: "Chi tiêu", cat: "market" },
+            { fr: "Un cadre photo", vi: "Khung tranh / Khung ảnh", cat: "home" },
+            { fr: "Une coque de téléphone", vi: "Ốp lưng điện thoại", cat: "home" },
+            { fr: "Ensemble", vi: "Cùng nhau", cat: "actions" },
+            { fr: "Le futur proche", vi: "Tương lai gần", cat: "grammar" },
+            { fr: "Tricoter / Prochain(e)", vi: "Đan / Sắp tới", cat: "actions" },
+            { fr: "Moins / Degrés", vi: "Kém / Độ", cat: "grammar" },
+            { fr: "Tenue / Jours restants", vi: "Bộ đồ / Ngày còn lại", cat: "shopping" },
+            { fr: "Personnaliser", vi: "Cá nhân hóa", cat: "actions" },
+            { fr: "Le champ / La plage / L'herbe", vi: "Cánh đồng / Bãi biển / Cỏ", cat: "nature" },
+            { fr: "La plante / La fleur", vi: "Thực vật / Hoa", cat: "nature" }
         ];
 
-        // TỰ ĐỘNG TÁCH CÁC TỪ TIẾNG PHÁP GHI CHUNG (/)
         function processVocabulary(data) {
             let expanded = [];
             data.forEach(item => {
-                const frTerms = item.fr.split('/').map(t => t.trim());
-                frTerms.forEach(term => {
-                    expanded.push({ ...item, fr: term, originalVi: item.vi });
-                });
+                const frParts = item.fr.split('/').map(t => t.trim());
+                const viParts = item.vi.split('/').map(t => t.trim());
+                
+                if (frParts.length === viParts.length && frParts.length > 1) {
+                    for (let i = 0; i < frParts.length; i++) {
+                        expanded.push({ ...item, fr: frParts[i], vi: viParts[i] });
+                    }
+                } else {
+                    frParts.forEach((fr, idx) => {
+                        const vi = viParts[idx] || item.vi;
+                        expanded.push({ ...item, fr: fr, vi: vi });
+                    });
+                }
             });
             return expanded;
         }
@@ -288,13 +351,12 @@
             { id: 'home', name: 'Đời sống', icon: 'home' },
             { id: 'animals', name: 'Động vật', icon: 'dog' },
             { id: 'countries', name: 'Quốc gia', icon: 'globe' },
-            { id: 'grammar', name: 'Trạng từ/Mùa', icon: 'clock' },
+            { id: 'grammar', name: 'Ngữ pháp/Thời gian', icon: 'clock' },
         ];
 
         let state = {
             currentMode: 'study',
             quizType: 'mcq',
-            quizConfigDir: 'fr_vi',
             activeTab: 'all',
             currentIndex: 0,
             isFlipped: false,
@@ -309,10 +371,8 @@
             return text ? text.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ') : "";
         }
 
-        // KIỂM TRA ĐÁP ÁN (CHẤP NHẬN 1 TRONG NHIỀU NGHĨA)
         function checkAnswerMatch(userAnswer, correctFullAnswer) {
             const userNorm = normalize(userAnswer);
-            // Tách các nghĩa bằng dấu / hoặc ,
             const validOptions = correctFullAnswer.split(/[/,;]/).map(opt => normalize(opt));
             return validOptions.includes(userNorm);
         }
@@ -369,7 +429,7 @@
                 document.getElementById('prev-btn').disabled = state.currentIndex === 0;
                 document.getElementById('next-btn').disabled = state.currentIndex === state.cards.length - 1;
             } else { studySection.classList.add('hidden'); emptyState.classList.remove('hidden'); }
-            document.getElementById('footer-count').innerText = `Hệ thống đã tách & nạp ${vocabulary.length} từ vựng chuyên lẻ.`;
+            document.getElementById('footer-count').innerText = `Hệ thống đã sửa lỗi và nạp ${vocabulary.length} thẻ từ vựng độc lập.`;
         }
 
         function setupModeSwitcher() {
@@ -413,7 +473,13 @@
             const optionsDiv = document.getElementById('quiz-options');
             optionsDiv.classList.remove('hidden');
             document.getElementById('quiz-writing').classList.add('hidden');
-            const distractors = vocabulary.filter(v => normalize(v.fr) !== normalize(cur.fr)).sort(() => Math.random() - 0.5).slice(0, 3).map(v => state.currentQuizDir === 'fr_vi' ? v.vi : v.fr);
+            
+            const distractors = vocabulary
+                .filter(v => normalize(v.fr) !== normalize(cur.fr))
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3)
+                .map(v => state.currentQuizDir === 'fr_vi' ? v.vi : v.fr);
+            
             const opts = [...distractors, state.currentAnswer].sort(() => Math.random() - 0.5);
             optionsDiv.innerHTML = '';
             opts.forEach(opt => {
@@ -434,11 +500,11 @@
                 state.quizScore++;
                 icon.innerHTML = '<div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check"></i></div>';
                 document.getElementById('feedback-title').innerText = "Chính xác!";
-                document.getElementById('feedback-msg').innerText = `Vâng, đáp án là: ${state.currentAnswer}`;
+                document.getElementById('feedback-msg').innerText = `Đáp án đúng là: ${state.currentAnswer}`;
             } else {
                 icon.innerHTML = '<div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center"><i data-lucide="x"></i></div>';
                 document.getElementById('feedback-title').innerText = "Chưa đúng!";
-                document.getElementById('feedback-msg').innerHTML = `Lẽ ra là: <span class="font-bold text-slate-800">${state.currentAnswer}</span>`;
+                document.getElementById('feedback-msg').innerHTML = `Lẽ ra phải là: <span class="font-bold text-slate-800">${state.currentAnswer}</span>`;
             }
             lucide.createIcons();
         }
