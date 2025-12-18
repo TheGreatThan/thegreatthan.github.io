@@ -1,30 +1,479 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>French Flashcards 🇫🇷</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Flashcard & Quiz Tiếng Pháp Pro - USSH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .perspective-1000 { perspective: 1000px; }
+        .preserve-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .flashcard {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .correct-glow {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+            border-color: #22c55e !important;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-12 font-sans">
 
-    <header>
-        <h1>French Vocabulary Flashcards</h1>
-    </header>
-
-    <div class="container">
-        <div id="flashcard-container">
+    <!-- Header -->
+    <nav class="bg-white border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 p-2 rounded-xl shadow-blue-200 shadow-lg">
+                    <i data-lucide="book-open" class="text-white w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent leading-none">
+                        Flashcard Pháp USSH
+                    </h1>
+                    <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest mt-1">Học & Kiểm tra chuyên sâu</p>
+                </div>
             </div>
 
-        <div class="controls">
-            <button id="next-button">Next Word &rarr;</button>
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="relative flex-1 md:w-64">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                    <input 
+                        type="text" 
+                        id="search-input"
+                        placeholder="Tìm từ vựng..." 
+                        class="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    >
+                </div>
+                <div class="bg-slate-100 p-1 rounded-full flex gap-1">
+                    <button id="mode-study" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-white shadow-sm text-blue-600">HỌC TẬP</button>
+                    <button id="mode-quiz" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all text-slate-500">KIỂM TRA</button>
+                </div>
+            </div>
         </div>
-        
-        <div id="status">
-            Word <span id="current-index">0</span> of <span id="total-words">0</span>
-        </div>
-    </div>
+    </nav>
 
-    <script src="script.js"></script>
+    <main class="max-w-6xl mx-auto px-4 mt-8">
+        <!-- Category Tabs -->
+        <div id="category-tabs" class="flex overflow-x-auto pb-4 gap-2 no-scrollbar"></div>
+
+        <!-- STUDY MODE SECTION -->
+        <div id="study-section" class="mt-4 flex flex-col items-center fade-in">
+            <div class="w-full max-w-xl mb-6 flex flex-col gap-2">
+                <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    <span id="study-category-label">Đang xem: Tất cả</span>
+                    <span id="study-progress-text">0 / 0</span>
+                </div>
+                <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="study-progress-bar" class="h-full bg-blue-500 transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <div id="card-trigger" class="relative w-full max-w-xl aspect-[16/10] perspective-1000 cursor-pointer group">
+                <div id="flashcard-inner" class="relative w-full h-full preserve-3d flashcard">
+                    <div class="absolute inset-0 backface-hidden bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center p-10 text-center">
+                        <span class="absolute top-8 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase tracking-[0.3em] text-blue-500 opacity-40">Langue Française</span>
+                        <h2 id="fr-text" class="text-4xl md:text-5xl font-bold text-slate-800 break-words max-w-full leading-tight"></h2>
+                    </div>
+                    <div class="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center p-10 text-center text-white">
+                        <span class="absolute top-8 left-1/2 -translate-x-1/2 text-[10px] font-black uppercase tracking-[0.3em] text-white opacity-40">Traduction Việt</span>
+                        <h3 id="vi-text" class="text-2xl md:text-3xl font-bold mb-4 leading-tight"></h3>
+                        <div id="note-container" class="mt-6 hidden flex items-start gap-3 bg-white/10 p-5 rounded-3xl max-w-sm text-left border border-white/20 backdrop-blur-sm">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-yellow-300 shrink-0"></i>
+                            <p id="note-text" class="text-sm text-blue-50 leading-relaxed italic"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 flex items-center gap-4 md:gap-8">
+                <button id="prev-btn" class="p-4 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all active:scale-90 disabled:opacity-30 shadow-sm"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
+                <button id="shuffle-btn" class="flex items-center gap-2 px-10 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all active:scale-95 shadow-xl shadow-slate-200"><i data-lucide="shuffle" class="w-4 h-4"></i> Xáo trộn</button>
+                <button id="next-btn" class="p-4 rounded-2xl bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all active:scale-90 disabled:bg-slate-300"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+            </div>
+        </div>
+
+        <!-- QUIZ MODE SECTION -->
+        <div id="quiz-section" class="mt-4 flex flex-col items-center fade-in hidden">
+            <div class="w-full max-w-xl flex flex-col gap-6">
+                <!-- Quiz Config -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Hướng kiểm tra</span>
+                        <select id="quiz-direction-select" class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg outline-none cursor-pointer">
+                            <option value="fr_vi">Pháp → Việt</option>
+                            <option value="vi_fr">Việt → Pháp</option>
+                            <option value="mixed">Ngẫu nhiên (Mixed)</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tiến trình</span>
+                            <span id="quiz-progress-text" class="text-sm font-bold text-blue-600">0 / 0</span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Điểm số</span>
+                            <span id="quiz-score" class="text-sm font-bold text-green-600">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Card -->
+                <div id="quiz-card" class="bg-white rounded-[2.5rem] shadow-xl border border-slate-100 p-8 md:p-12 min-h-[400px] flex flex-col justify-center relative overflow-hidden">
+                    <div id="quiz-question-area" class="text-center">
+                        <span id="quiz-direction-label" class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500 opacity-60 block mb-6">DỊCH SANG TIẾNG PHÁP</span>
+                        <h2 id="quiz-question-text" class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight mb-10"></h2>
+                        
+                        <div id="quiz-options" class="grid grid-cols-1 gap-3 w-full max-w-md mx-auto"></div>
+
+                        <div id="quiz-writing" class="hidden w-full max-w-md mx-auto">
+                            <input type="text" id="quiz-input" autocomplete="off" placeholder="Nhập câu trả lời..." class="w-full p-4 rounded-2xl border-2 border-slate-100 focus:border-blue-500 outline-none text-center text-xl font-medium transition-all">
+                            <p class="text-[10px] text-slate-400 mt-2 italic">* Chấp nhận nhiều nghĩa tương đương</p>
+                            <button id="quiz-submit" class="mt-4 w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 active:scale-95 transition-all">KIỂM TRA</button>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Overlay -->
+                    <div id="quiz-feedback" class="absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 hidden z-20">
+                        <div id="feedback-icon" class="mb-4"></div>
+                        <h3 id="feedback-title" class="text-2xl font-bold mb-2"></h3>
+                        <p id="feedback-msg" class="text-slate-500 mb-8 text-center"></p>
+                        <button id="quiz-next-question" class="px-10 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 active:scale-95 transition-all">TIẾP TỤC</button>
+                    </div>
+                </div>
+
+                <div class="flex justify-center gap-2">
+                    <button id="quiz-type-mcq" class="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all bg-blue-100 text-blue-600">Trắc nghiệm</button>
+                    <button id="quiz-type-write" class="px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all bg-slate-100 text-slate-400">Điền từ</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="empty-state" class="mt-20 text-center hidden">
+            <i data-lucide="search-x" class="w-16 h-16 text-slate-200 mx-auto mb-4"></i>
+            <h3 class="text-xl font-bold text-slate-400">Không tìm thấy từ này</h3>
+        </div>
+    </main>
+
+    <footer class="mt-20 text-center py-10 border-t border-slate-100">
+        <p class="flex items-center justify-center gap-2 text-slate-400 font-medium">
+            <i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>
+            <span id="footer-count">Đang chuẩn bị...</span>
+        </p>
+    </footer>
+
+    <script>
+        const rawVocabularyBase = [
+            // DỮ LIỆU GỐC TỪ PDF
+            { fr: "Observer", vi: "Quan sát", cat: "actions" },
+            { fr: "Qu'est-ce que c'est", vi: "Đây là cái gì?", cat: "actions" },
+            { fr: "Échange", vi: "Trao đổi", cat: "actions" },
+            { fr: "Quelqu'un", vi: "Ai đó", cat: "actions" },
+            { fr: "Associer", vi: "Liên kết / Nối / Tu nói", cat: "actions" },
+            { fr: "La pluie", vi: "Mưa", cat: "nature" },
+            { fr: "Il pleut", vi: "Trời mưa", cat: "nature" },
+            { fr: "Le quartier", vi: "Khu phố / Phường", cat: "home" },
+            { fr: "Au fait", vi: "Nhân tiện", cat: "actions" },
+            { fr: "La place", vi: "Chỗ ngồi / Quảng trường", cat: "home" },
+            { fr: "Auteur / Auteure", vi: "Tác giả", cat: "actions" },
+            { fr: "Inviter", vi: "Mời", cat: "actions" },
+            { fr: "Des fresques", vi: "Bức họa", cat: "nature" },
+            { fr: "Sur", vi: "Trên", cat: "home" },
+            { fr: "Mur", vi: "Tường", cat: "home" },
+            { fr: "Monter / Montrer", vi: "Đi lên / Cho thấy", cat: "actions" },
+            { fr: "Personnalités", vi: "Người nổi tiếng", cat: "actions" },
+            { fr: "Le violon", vi: "Vĩ cầm", cat: "music" },
+            { fr: "Le tambour", vi: "Cái trống", cat: "music" },
+            { fr: "Le violoncelle", vi: "Đàn Cello", cat: "music" },
+            { fr: "La batterie", vi: "Bộ trống", cat: "music" },
+            { fr: "La harpe", vi: "Đàn hạc", cat: "music" },
+            { fr: "Le piano", vi: "Đàn Piano", cat: "music" },
+            { fr: "La guitare", vi: "Đàn Ghi-ta", cat: "music" },
+            { fr: "L'accordéon", vi: "Đàn Accordéon", cat: "music" },
+            { fr: "La flûte", vi: "Sáo", cat: "music" },
+            { fr: "Le Saxophone", vi: "Kèn Saxophone", cat: "music" },
+            { fr: "La trompette", vi: "Kèn Trumpet", cat: "music" },
+            { fr: "L'harmonica", vi: "Kèn Harmonica", cat: "music" },
+            { fr: "Jouer à + Sport", vi: "Chơi môn thể thao", cat: "sport" },
+            { fr: "Faire de + Sport", vi: "Tập môn thể thao", cat: "sport" },
+            { fr: "Aux bài / Aux cartes", vi: "Chơi bài", cat: "sport" },
+            { fr: "Le ping-pong", vi: "Bóng bàn", cat: "sport" },
+            { fr: "Le tennis", vi: "Quần vợt", cat: "sport" },
+            { fr: "Le foot", vi: "Bóng đá", cat: "sport" },
+            { fr: "L'équitation", vi: "Cưỡi ngựa", cat: "sport" },
+            { fr: "Le ski", vi: "Trượt tuyết", cat: "sport" },
+            { fr: "L'escalade", vi: "Leo núi", cat: "sport" },
+            { fr: "Le jogging", vi: "Chạy bộ", cat: "sport" },
+            { fr: "La natation", vi: "Bơi lội", cat: "sport" },
+            { fr: "L'escrime", vi: "Đấu kiếm", cat: "sport" },
+            { fr: "Le patinage", vi: "Trượt băng", cat: "sport" },
+            { fr: "Le vélo", vi: "Đạp xe", cat: "sport" },
+            { fr: "Les jeux vidéo", vi: "Chơi điện tử", cat: "sport" },
+            { fr: "S'effondrer / S'écrouler", vi: "Sụp đổ / Sập", cat: "actions" },
+            { fr: "Gêner", vi: "Làm quá / Làm phiền", cat: "actions" },
+            { fr: "Toxique", vi: "Độc hại", cat: "actions" },
+            { fr: "Déménager", vi: "Chuyển nhà", cat: "home" },
+            { fr: "Lumineux / Sombre", vi: "Sáng / Tối", cat: "home" },
+            { fr: "Moderne / Ancien", vi: "Hiện đại / Cổ kính", cat: "home" },
+            { fr: "Calme / Bruyant", vi: "Yên tĩnh / Ồn ào", cat: "home" },
+            { fr: "Rappeler / Répéter", vi: "Nhắc lại / Lặp lại", cat: "actions" },
+            { fr: "Se Souvenir", vi: "Nhớ lại", cat: "actions" },
+            { fr: "C'est dommage", vi: "Thật đáng tiếc", cat: "actions" },
+            { fr: "J'aimerais", vi: "Tôi muốn", cat: "actions" },
+            { fr: "Cassé / Réparer", vi: "Hỏng / Sửa", cat: "actions" },
+            { fr: "Disponible", vi: "Có sẵn", cat: "actions" },
+            { fr: "Actuellement", vi: "Hiện nay", cat: "grammar" },
+            { fr: "Parcourir", vi: "Đi khắp nơi", cat: "actions" },
+            { fr: "Durant / Pendant", vi: "Trong khoảng thời gian", cat: "grammar" },
+            { fr: "L'arrivée / Le départ", vi: "Sự đến / Sự đi", cat: "nature" },
+            { fr: "Se dérouler / Se passer / Avoir lieu", vi: "Diễn ra / Xảy ra", cat: "actions" },
+            { fr: "S'ennuyer", vi: "Buồn chán", cat: "actions" },
+            { fr: "Manquer", vi: "Thiếu / Nhớ", cat: "actions" },
+            { fr: "Livrer / Camion", vi: "Giao hàng / Xe tải", cat: "market" },
+            { fr: "Le toit / Le sol", vi: "Mái nhà / Mặt đất", cat: "home" },
+            { fr: "Cher / Chère", vi: "Đắt / Thân mến", cat: "shopping" },
+            { fr: "Chercher / Tìm kiếm", vi: "Tìm kiếm", cat: "actions" },
+            { fr: "Trouver", vi: "Tìm thấy", cat: "actions" },
+            { fr: "Gagner son pain / sa vie", vi: "Kiếm sống", cat: "market" },
+            { fr: "La France / Français", vi: "Pháp / Người Pháp", cat: "countries" },
+            { fr: "L'Italie / Italien", vi: "Ý / Người Ý", cat: "countries" },
+            { fr: "Le Vietnam / Vietnamien", vi: "Việt Nam / Người Việt", cat: "countries" },
+            { fr: "Hébergement", vi: "Chỗ ở", cat: "nature" },
+            { fr: "La campagne / Camping", vi: "Vùng quê / Cắm trại", cat: "nature" },
+            { fr: "L'île / La mer / La montagne", vi: "Hòn đảo / Biển / Núi", cat: "nature" },
+            { fr: "La forêt / Le lac", vi: "Rừng / Hồ", cat: "nature" },
+            { fr: "Le canard / Le chat / Le chien / Le cheval", vi: "Vịt / Mèo / Chó / Ngựa", cat: "animals" },
+            { fr: "Carré / Rond / Rectangulaire / Triangulaire", vi: "Vuông / Tròn / Chữ nhật / Tam giác", cat: "home" },
+            { fr: "Lourd / Léger", vi: "Nặng / Nhẹ", cat: "grammar" },
+            { fr: "Bientôt / Déjà", vi: "Sắp / Đã", cat: "grammar" }
+        ];
+
+        // TỰ ĐỘNG TÁCH CÁC TỪ TIẾNG PHÁP GHI CHUNG (/)
+        function processVocabulary(data) {
+            let expanded = [];
+            data.forEach(item => {
+                const frTerms = item.fr.split('/').map(t => t.trim());
+                frTerms.forEach(term => {
+                    expanded.push({ ...item, fr: term, originalVi: item.vi });
+                });
+            });
+            return expanded;
+        }
+
+        const vocabulary = processVocabulary(rawVocabularyBase);
+
+        const categories = [
+            { id: 'all', name: 'Tất cả', icon: 'layers' },
+            { id: 'actions', name: 'Hành động', icon: 'play' },
+            { id: 'music', name: 'Âm nhạc', icon: 'music' },
+            { id: 'sport', name: 'Thể thao', icon: 'trophy' },
+            { id: 'nature', name: 'Du lịch/T.nhiên', icon: 'palmtree' },
+            { id: 'shopping', name: 'Thời trang', icon: 'shopping-bag' },
+            { id: 'market', name: 'Kinh doanh', icon: 'banknote' },
+            { id: 'home', name: 'Đời sống', icon: 'home' },
+            { id: 'animals', name: 'Động vật', icon: 'dog' },
+            { id: 'countries', name: 'Quốc gia', icon: 'globe' },
+            { id: 'grammar', name: 'Trạng từ/Mùa', icon: 'clock' },
+        ];
+
+        let state = {
+            currentMode: 'study',
+            quizType: 'mcq',
+            quizConfigDir: 'fr_vi',
+            activeTab: 'all',
+            currentIndex: 0,
+            isFlipped: false,
+            searchTerm: '',
+            cards: [...vocabulary],
+            quizScore: 0,
+            currentQuizDir: 'fr_vi',
+            currentAnswer: ''
+        };
+
+        function normalize(text) {
+            return text ? text.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ' ') : "";
+        }
+
+        // KIỂM TRA ĐÁP ÁN (CHẤP NHẬN 1 TRONG NHIỀU NGHĨA)
+        function checkAnswerMatch(userAnswer, correctFullAnswer) {
+            const userNorm = normalize(userAnswer);
+            // Tách các nghĩa bằng dấu / hoặc ,
+            const validOptions = correctFullAnswer.split(/[/,;]/).map(opt => normalize(opt));
+            return validOptions.includes(userNorm);
+        }
+
+        function init() {
+            renderTabs();
+            lucide.createIcons();
+            updateCards();
+            setupModeSwitcher();
+            setupQuizControls();
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('category-tabs');
+            container.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `flex items-center gap-2 px-5 py-2.5 rounded-2xl whitespace-nowrap text-xs font-bold uppercase tracking-wider transition-all ${state.activeTab === cat.id ? 'bg-blue-600 text-white shadow-xl' : 'bg-white text-slate-400 border border-slate-100'}`;
+                btn.innerHTML = `<i data-lucide="${cat.icon}" class="w-4 h-4"></i> ${cat.name}`;
+                btn.onclick = () => { state.activeTab = cat.id; renderTabs(); updateCards(); };
+                container.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        function updateCards() {
+            let filtered = vocabulary;
+            if (state.activeTab !== 'all') filtered = filtered.filter(item => item.cat === state.activeTab);
+            if (state.searchTerm) {
+                const term = state.searchTerm.toLowerCase();
+                filtered = filtered.filter(item => item.fr.toLowerCase().includes(term) || item.vi.toLowerCase().includes(term));
+            }
+            state.cards = filtered;
+            state.currentIndex = 0;
+            if (state.currentMode === 'study') updateStudyUI();
+            else startQuiz();
+        }
+
+        function updateStudyUI() {
+            const studySection = document.getElementById('study-section');
+            const emptyState = document.getElementById('empty-state');
+            if (state.cards.length > 0) {
+                studySection.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                const cur = state.cards[state.currentIndex];
+                document.getElementById('fr-text').innerText = cur.fr;
+                document.getElementById('vi-text').innerText = cur.vi;
+                const note = document.getElementById('note-container');
+                if (cur.note) { note.classList.remove('hidden'); document.getElementById('note-text').innerText = cur.note; }
+                else note.classList.add('hidden');
+                document.getElementById('study-progress-bar').style.width = `${((state.currentIndex + 1) / state.cards.length) * 100}%`;
+                document.getElementById('study-progress-text').innerText = `${state.currentIndex + 1} / ${state.cards.length}`;
+                document.getElementById('flashcard-inner').classList.toggle('rotate-y-180', state.isFlipped);
+                document.getElementById('prev-btn').disabled = state.currentIndex === 0;
+                document.getElementById('next-btn').disabled = state.currentIndex === state.cards.length - 1;
+            } else { studySection.classList.add('hidden'); emptyState.classList.remove('hidden'); }
+            document.getElementById('footer-count').innerText = `Hệ thống đã tách & nạp ${vocabulary.length} từ vựng chuyên lẻ.`;
+        }
+
+        function setupModeSwitcher() {
+            const sBtn = document.getElementById('mode-study');
+            const qBtn = document.getElementById('mode-quiz');
+            sBtn.onclick = () => { state.currentMode = 'study'; sBtn.classList.add('bg-white','shadow-sm','text-blue-600'); qBtn.classList.remove('bg-white','shadow-sm','text-blue-600'); document.getElementById('study-section').classList.remove('hidden'); document.getElementById('quiz-section').classList.add('hidden'); updateStudyUI(); };
+            qBtn.onclick = () => { state.currentMode = 'quiz'; qBtn.classList.add('bg-white','shadow-sm','text-blue-600'); sBtn.classList.remove('bg-white','shadow-sm','text-blue-600'); document.getElementById('study-section').classList.add('hidden'); document.getElementById('quiz-section').classList.remove('hidden'); startQuiz(); };
+        }
+
+        function startQuiz() {
+            if (state.cards.length < 4) { document.getElementById('quiz-question-text').innerText = "Cần ít nhất 4 từ."; return; }
+            state.quizScore = 0; state.currentIndex = 0; state.cards.sort(() => Math.random() - 0.5);
+            renderQuizQ();
+        }
+
+        function renderQuizQ() {
+            const cur = state.cards[state.currentIndex];
+            const configDir = document.getElementById('quiz-direction-select').value;
+            state.currentQuizDir = configDir === 'mixed' ? (Math.random() > 0.5 ? 'fr_vi' : 'vi_fr') : configDir;
+            
+            document.getElementById('quiz-progress-text').innerText = `${state.currentIndex + 1} / ${state.cards.length}`;
+            document.getElementById('quiz-score').innerText = state.quizScore;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-input').value = '';
+
+            if (state.currentQuizDir === 'fr_vi') {
+                document.getElementById('quiz-direction-label').innerText = "DỊCH SANG TIẾNG VIỆT";
+                document.getElementById('quiz-question-text').innerText = cur.fr;
+                state.currentAnswer = cur.vi;
+            } else {
+                document.getElementById('quiz-direction-label').innerText = "DỊCH SANG TIẾNG PHÁP";
+                document.getElementById('quiz-question-text').innerText = cur.vi;
+                state.currentAnswer = cur.fr;
+            }
+
+            if (state.quizType === 'mcq') renderMCQ(cur);
+            else { document.getElementById('quiz-options').classList.add('hidden'); document.getElementById('quiz-writing').classList.remove('hidden'); document.getElementById('quiz-input').focus(); }
+        }
+
+        function renderMCQ(cur) {
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.classList.remove('hidden');
+            document.getElementById('quiz-writing').classList.add('hidden');
+            const distractors = vocabulary.filter(v => normalize(v.fr) !== normalize(cur.fr)).sort(() => Math.random() - 0.5).slice(0, 3).map(v => state.currentQuizDir === 'fr_vi' ? v.vi : v.fr);
+            const opts = [...distractors, state.currentAnswer].sort(() => Math.random() - 0.5);
+            optionsDiv.innerHTML = '';
+            opts.forEach(opt => {
+                const b = document.createElement('button');
+                b.className = "w-full p-4 rounded-2xl border-2 border-slate-100 hover:border-blue-500 hover:bg-blue-50 text-slate-700 font-medium transition-all text-left";
+                b.innerText = opt;
+                b.onclick = () => checkQuiz(opt);
+                optionsDiv.appendChild(b);
+            });
+        }
+
+        function checkQuiz(userAns) {
+            const correct = checkAnswerMatch(userAns, state.currentAnswer);
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+            const icon = document.getElementById('feedback-icon');
+            if (correct) {
+                state.quizScore++;
+                icon.innerHTML = '<div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check"></i></div>';
+                document.getElementById('feedback-title').innerText = "Chính xác!";
+                document.getElementById('feedback-msg').innerText = `Vâng, đáp án là: ${state.currentAnswer}`;
+            } else {
+                icon.innerHTML = '<div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center"><i data-lucide="x"></i></div>';
+                document.getElementById('feedback-title').innerText = "Chưa đúng!";
+                document.getElementById('feedback-msg').innerHTML = `Lẽ ra là: <span class="font-bold text-slate-800">${state.currentAnswer}</span>`;
+            }
+            lucide.createIcons();
+        }
+
+        function setupQuizControls() {
+            document.getElementById('quiz-type-mcq').onclick = () => { state.quizType = 'mcq'; renderQuizQ(); };
+            document.getElementById('quiz-type-write').onclick = () => { state.quizType = 'write'; renderQuizQ(); };
+            document.getElementById('quiz-submit').onclick = () => checkQuiz(document.getElementById('quiz-input').value);
+            document.getElementById('quiz-direction-select').onchange = () => startQuiz();
+            document.getElementById('quiz-next-question').onclick = () => {
+                if (state.currentIndex < state.cards.length - 1) { state.currentIndex++; renderQuizQ(); }
+                else startQuiz();
+            };
+        }
+
+        document.getElementById('card-trigger').onclick = () => { state.isFlipped = !state.isFlipped; updateStudyUI(); };
+        document.getElementById('next-btn').onclick = () => { if (state.currentIndex < state.cards.length - 1) { state.isFlipped = false; state.currentIndex++; updateStudyUI(); } };
+        document.getElementById('prev-btn').onclick = () => { if (state.currentIndex > 0) { state.isFlipped = false; state.currentIndex--; updateStudyUI(); } };
+        document.getElementById('shuffle-btn').onclick = () => { state.cards.sort(() => Math.random() - 0.5); state.currentIndex = 0; updateStudyUI(); };
+        document.getElementById('search-input').oninput = (e) => { state.searchTerm = e.target.value; updateCards(); };
+
+        window.onkeydown = (e) => {
+            if (state.currentMode === 'study') {
+                if (e.key === 'ArrowRight') document.getElementById('next-btn').click();
+                if (e.key === 'ArrowLeft') document.getElementById('prev-btn').click();
+                if (e.key === ' ') { e.preventDefault(); document.getElementById('card-trigger').click(); }
+            } else if (state.currentMode === 'quiz' && state.quizType === 'write') {
+                if (e.key === 'Enter') {
+                    if (document.getElementById('quiz-feedback').classList.contains('hidden')) document.getElementById('quiz-submit').click();
+                    else document.getElementById('quiz-next-question').click();
+                }
+            }
+        };
+
+        window.onload = init;
+    </script>
 </body>
 </html>
